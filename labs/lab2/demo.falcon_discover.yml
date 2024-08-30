@@ -38,15 +38,15 @@ keyed_groups:
   #- prefix: tag
   #  key: tags
   # places host in a group named rfm_<Yes|No> to see if the host is in reduced functionality mode
-  # - prefix: rfm
-  #   key: reduced_functionality_mode
+  #- prefix: rfm
+  #  key: reduced_functionality_mode
   # places host in a group named location_<city> based on the city the host is located in
-  # - prefix: location
-  #   key: city
+  #- prefix: location
+  #  key: city
   # places host in a group names sketch_<account_id> based on the account_id of the host
   # useful for duplicate hostnames in different cloud accounts
-  # - prefix: sketchy
-  #   key: cloud_account_id
+  #- prefix: sketchy
+  #  key: cloud_account_id
 
 # place hosts in named groups based on conditional statements <evaluated as true>
 groups:

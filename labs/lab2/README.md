@@ -187,11 +187,9 @@ Since the Falcon Discover API can't read OS level information about the unmanage
 
 So how do we target the correct assets?
 
-There are 2 ways we can accomplish this using the Falcon Discover dynamic inventory:
+#### Allow duplicate hostnames
 
-#### Method 1: Allow duplicate hostnames
-
-This is more relevant outside the lab environment but for demonstration purposes let's give it a shot.
+In order to allow duplicate hostnames, we can append a unique identifier to the hostname to make it unique.
 
 Uncomment the following line in the `demo.falcon_discover.yml` file:
 
@@ -205,9 +203,9 @@ What this does is that if the hostnames already exist in the inventory, it will 
 ansible-inventory -i demo.falcon_discover.yml --graph
 ```
 
-#### Method 2: Modify the keyed_groups
+#### Modify the keyed_groups to group assets by `cloud_account_id`
 
-With this method, we can use a unique identifier to group the assets. In our case, we will use the `cloud_account_id` since everyone has a unique AWS account ID in the lab.
+To clean it up, we can use another unique identifier to group the assets. In our case, we will use the `cloud_account_id` since everyone has a unique AWS account ID in the lab.
 
 ***Recomment the previous change*** and then under the `keyed_groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
