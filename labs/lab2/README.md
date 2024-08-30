@@ -57,7 +57,7 @@ ansible-inventory -i demo.falcon_discover.yml --list | less
 
 #### View all unmanaged assets in our environment
 
-Recomment the previous line and uncomment the following line in the `demo.falcon_discover.yml` file:
+***Recomment the previous line*** and uncomment the following line in the `demo.falcon_discover.yml` file:
 
 ```yaml
 #filter: "entity_type:'unmanaged'+first_seen_timestamp:>'now-1d'"
@@ -71,7 +71,7 @@ ansible-inventory -i demo.falcon_discover.yml --list | less
 
 #### View all the 'ansible' lab VMs in our environment
 
-Recomment the previous line and uncomment the following line in the `demo.falcon_discover.yml` file:
+***Recomment the previous line*** and uncomment the following line in the `demo.falcon_discover.yml` file:
 
 ```yaml
 #filter: hostname:*'*-ansible'
@@ -82,6 +82,8 @@ Save the file and run the `ansible-inventory` command to view the filtered asset
 ```bash
 ansible-inventory -i demo.falcon_discover.yml --list | less
 ```
+
+***Recomment the previous line*** and save the file before moving on to the next section.
 
 ### Grouping Assets
 
@@ -97,8 +99,8 @@ Now that we have seen how to filter assets, let's group them to make it easier t
 Under the `keyed_groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
 ```yaml
-  #- prefix: cloud
-  #  key: cloud_provider
+#- prefix: cloud
+#  key: cloud_provider
 ```
 
 Save the file and run the `ansible-inventory` command to view the grouped assets
@@ -114,7 +116,7 @@ ansible-inventory -i demo.falcon_discover.yml --graph
 Under the `groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
 ```yaml
-  #unmanaged_assets: "entity_type == 'unmanaged'"
+#unmanaged_assets: "entity_type == 'unmanaged'"
 ```
 
 This creates a group called `unmanaged_assets` that contains all the unmanaged assets in our environment. Save the file and run the `ansible-inventory` command to view the grouped assets
@@ -124,3 +126,207 @@ ansible-inventory -i demo.falcon_discover.yml --graph
 ```
 
 ### Modify Host Variables
+
+The compose section of the `demo.falcon_discover.yml` file allows us to modify the host variables. In this section, we can add or modify variables for each host using jinja2 templating.
+
+#### View host variables for a specific host
+
+Before we modify the host variables, let's first view the host variables for a specific host.
+Run the `ansible-inventory` command to view the host variables for a specific host
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal
+```
+
+#### Set the ansible_host to the local IP address
+
+Under the `compose` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
+
+```yaml
+#ansible_host: local_ip_addresses[0]
+```
+
+This sets the `ansible_host` variable to the first local IP address of the host. Save the file and run the `ansible-inventory` command to view the modified host variables
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal
+```
+
+#### Set the ansible_user to 'ec2-user'
+
+Under the `compose` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
+
+```yaml
+#ansible_user: ec2-user
+```
+
+This sets the `ansible_user` variable to 'ec2-user'. Save the file and run the `ansible-inventory` command to view the modified host variables across all hosts
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --list | less
+```
+
+### Narrowing the Scope
+
+Now that we have seen how to filter, group, and modify host variables, let's use Ansible to deploy the Falcon sensor against unmanaged assets. Specifically, for this lab we will want to ensure that you are targeting the correct assets before proceeding.
+
+> [!WARNING]
+> Duplicate hostnames are not allowed in Ansible. If you have duplicate hostnames in your environment, you will need to modify the `demo.falcon_discover.yml` file to ensure that each host has a unique hostname. See the below for examples on how to accomplish this.
+
+In this lab, we all have a unique alias assigned to our lab VMs. For example, on your `ansible` VM you will see the hostname as `<alias>-ansible`.
+
+You also have 2 unmanaged assets in your environment with the following hostnames:
+
+- `<alias>-sketchy-cat1`
+- `<alias>-sketchy-cat2`
+
+Since the Falcon Discover API can't read OS level information about the unmanaged assets, it instead is using the aws hostname as the hostname for the unmanaged assets. This means that everyone in the lab will have the same unmanaged assets in their environment.
+
+- `ip-172-17-0-20.us-west-2.compute.internal`
+- `ip-172-17-0-30.us-west-2.compute.internal`
+
+So how do we target the correct assets?
+
+There are 2 ways we can accomplish this using the Falcon Discover dynamic inventory:
+
+#### Method 1: Allow duplicate hostnames
+
+This is more relevant outside the lab environment but for demonstration purposes let's give it a shot.
+
+Uncomment the following line in the `demo.falcon_discover.yml` file:
+
+```yaml
+#allow_duplicates: true
+```
+
+What this does is that if the hostnames already exist in the inventory, it will append a unique identifier (*the Asset ID*) to the hostname to make it unique. Save the file and run the `ansible-inventory` command to view the assets with the unique identifiers
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --graph
+```
+
+#### Method 2: Modify the keyed_groups
+
+With this method, we can use a unique identifier to group the assets. In our case, we will use the `cloud_account_id` since everyone has a unique AWS account ID in the lab.
+
+***Recomment the previous change*** and then under the `keyed_groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
+
+```yaml
+# - prefix: sketchy
+#   key: cloud_account_id
+```
+
+Save the file and run the `ansible-inventory` command to view the new grouped assets
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --graph
+```
+
+Look at all those unique groups! But which one is yours?
+
+We've added a couple of command aliases to help you identify your unique AWS account information as well as creating the final filter for the unmanaged assets.
+
+To view your AWS account information, run the following command:
+
+```bash
+awsinfo
+```
+
+You can see your account id which would be the `cloud_account_id` in the grouped assets.
+
+Copy your AWS account id and run the following command to view your assets:
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --graph sketchy_<your-aws-account-id>
+```
+
+### Putting it all together
+
+Let's deploy the Falcon sensor against the unmanaged assets in our environment.
+
+Run the following command to view the filters you can use to specifically target the unmanaged assets in your environment:
+
+```bash
+discover-filters
+```
+
+This gives you 2 different filters you can use to target the unmanaged assets in your environment. You can use either one of them to target the unmanaged assets. Let's use the first filter to target the unmanaged assets and then validate our inventory looks correct.
+
+Add the following line to the `demo.falcon_discover.yml` file:
+
+```yaml
+filter: "entity_type:'unmanaged' + cloud_account_id:'<your-aws-account-id>'"
+```
+
+Save the file and run the `ansible-inventory` with the `unmanaged_assets` group to view the filtered assets
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --list -l unmanaged_assets
+```
+
+Now that we have confirmed that we are targeting the correct assets, let's make sure we can connect to the unmanaged assets.
+
+Run the following command to test the connection to the unmanaged assets:
+
+```bash
+ansible -i demo.falcon_discover.yml unmanaged_assets -m ping
+```
+
+You should see a response like this:
+
+```bash
+ip-172-17-0-20.us-west-2.compute.internal | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.7"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+ip-172-17-0-30.us-west-2.compute.internal | SUCCESS => {
+    "ansible_facts": {
+        "discovered_interpreter_python": "/usr/bin/python3.7"
+    },
+    "changed": false,
+    "ping": "pong"
+}
+```
+
+### Deploy the Falcon Sensor
+
+In this directory there is a playbook called `deploy-falcon.yml` that will deploy the Falcon sensor to the unmanaged assets in our environment.
+
+Let's take a peek at the playbook:
+
+```bash
+cat deploy-falcon.yml
+```
+
+Run the following command to deploy the Falcon sensor to the unmanaged assets in our environment:
+
+```bash
+ansible-playbook -i demo.falcon_discover.yml deploy-falcon.yml
+```
+
+#### Validate the deployment
+
+Sweet! You've just deployed the Falcon sensor to the unmanaged assets in your environment. You can now view the assets in the Falcon UI or we can also modify the `demo.falcon_discover.yml` file to filter for the assets with the Falcon sensor installed (aka managed assets).
+
+Update our previous filter to remove the entity_type so that it looks like this:
+
+```yaml
+filter: "cloud_account_id:'<your-aws-account-id>'"
+```
+
+Under the `groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
+
+```yaml
+#managed_assets: "entity_type == 'managed'"
+```
+
+Save the file and run the `ansible-inventory` with the `managed_assets` group to view the filtered assets
+
+```bash
+ansible-inventory -i demo.falcon_discover.yml --list managed_assets | less
+```
+
+Congratulations! You have successfully deployed the Falcon sensor to the unmanaged assets in your environment.
