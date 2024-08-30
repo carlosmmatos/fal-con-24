@@ -46,7 +46,7 @@ dynamic inventory to combat Shadow IT. This lab will demonstrate how to use the 
 Uncomment the following line in the `demo.falcon_discover.yml` file:
 
 ```yaml
-# filter: "cloud_provider:'AWS'"
+#filter: "cloud_provider:'AWS'"
 ```
 
 Save the file and run the `ansible-inventory` command to view the filtered assets
@@ -117,9 +117,10 @@ Under the `groups` section in the `demo.falcon_discover.yml` file, uncomment the
 
 ```yaml
 #unmanaged_assets: "entity_type == 'unmanaged'"
+#managed_assets: "entity_type == 'managed'"
 ```
 
-This creates a group called `unmanaged_assets` that contains all the unmanaged assets in our environment. Save the file and run the `ansible-inventory` command to view the grouped assets
+This creates 2 groups that contains all the unmanaged and managed assets in our environment. Save the file and run the `ansible-inventory` command to view the grouped assets
 
 ```bash
 ansible-inventory -i demo.falcon_discover.yml --graph
@@ -315,12 +316,6 @@ Update our previous filter to remove the entity_type so that it looks like this:
 filter: "cloud_account_id:'<your-aws-account-id>'"
 ```
 
-Under the `groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
-
-```yaml
-#managed_assets: "entity_type == 'managed'"
-```
-
 Save the file and run the `ansible-inventory` with the `managed_assets` group to view the filtered assets
 
 ```bash
@@ -328,3 +323,13 @@ ansible-inventory -i demo.falcon_discover.yml --list managed_assets | less
 ```
 
 Congratulations! You have successfully deployed the Falcon sensor to the unmanaged assets in your environment.
+
+## Bonus
+
+Run the following command using the `crowdstrike.falcon.falconctl_info` module to view the sensor information for sketchy-cat assets:
+
+```bash
+ansible -i demo.falcon_discover.yml '*sketchy-cat*' -m crowdstrike.falcon.falconctl_info -b
+```
+
+Look at the tags ;)
