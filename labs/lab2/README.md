@@ -2,16 +2,18 @@
 
 ## Overview
 
-In this lab, you will learn how we can leverage the Falcon Discover API via the `crowdstrike.falcon.falcon_discover` Ansible
+In this lab, you will learn how to leverage the Falcon Discover API via the `crowdstrike.falcon.falcon_discover` Ansible
 dynamic inventory to combat Shadow IT. This lab will demonstrate how to use the Falcon Discover dynamic inventory to identify all the assets in your environment, and how to use the filters and dynamic inventory features of Ansible to target specific assets for remediation. In our case, we will be deploying the Falcon sensor against unmanaged assets.
 
 ## Objectives
 
-- Learn how to use the Falcon Discover Dynamic Inventory to identify assets in your environment
-- Learn how to use Ansible filters to target specific assets
-- Learn how to group assets using Ansible's dynamic inventory
-- Learn how to modify host variables in Ansible's dynamic inventory
-- Learn how to use Ansible to deploy the Falcon sensor against unmanaged assets
+By the end of this lab, you will be able to:
+
+- Use the Falcon Discover Dynamic Inventory to identify assets in your environment
+- Use Ansible filters to target specific assets
+- Group assets using Ansible's dynamic inventory
+- Modify host variables in Ansible's dynamic inventory
+- Use Ansible to deploy the Falcon sensor against unmanaged assets
 
 ## Steps
 
