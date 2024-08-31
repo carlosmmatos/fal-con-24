@@ -16,3 +16,146 @@ By the end of this lab, you will be able to:
 - Respond to events using Ansible playbooks
 
 ## Steps
+
+1. Navigate to the `labs/lab3` directory to begin the lab.
+
+    ```bash
+    cd ~/labs/lab3
+    ```
+
+1. Review the structure of the lab directory by typing the `tree` command
+
+    ```terminal
+    .
+    ├── README.md
+    ├── inventory
+    ├── playbooks
+    │   └── host_contain.yml
+    └── rulebooks
+        ├── detection-demo.yml
+        └── detection-example.yml
+    ```
+
+This lab consists of a `rulebooks` directory that contains two rulebooks that will be used to demonstrate how to monitor and respond to CrowdStrike Falcon events using Ansible EDA. The `playbooks` directory contains a playbook that will show a high-level example of how to respond to events.
+
+## Rulebooks
+
+> [!IMPORTANT]
+> Rulebooks are not to be confused with Ansible playbooks. Even though they follow a similar structure, Rulebooks operate separately from Ansible core itself.
+
+Rulesbooks in Ansible EDA are YAML files that define how your system should respond to events. They are broken out into three main sections:
+
+- **Sources**: Define the sources of events that you want to monitor
+- **Rules**: Define the conditions that must be met for an event to trigger a response
+- **Actions**: Define the actions that should be taken when an event meets the conditions defined in the rules
+
+> [!NOTE]
+> For more information on rulebooks, see the [Ansible EDA documentation](https://ansible.readthedocs.io/projects/rulebook/en/latest/introduction.html#why-rulebooks).
+
+### Example Detection Events Rulebook
+
+Now that we have a basic understanding of rulebooks, let's take a look at the `detection-example.yml` rulebook in the `rulebooks` directory.
+
+Review the contents of the `detection-example.yml` rulebook
+
+```bash
+cat rulebooks/detection-example.yml
+```
+
+You can see that for the **source**, we are using the `crowdstrike.falcon.eventstreams` source. This source will allow us to monitor CrowdStrike Falcon events by tapping into the Event Streams API.
+
+> For more information on the `crowdstrike.falcon.eventstreams` source, see the [documentation](https://github.com/CrowdStrike/ansible_collection_falcon/blob/main/docs/crowdstrike.falcon.eventstream.md).
+
+The **rule** defined in this rulebook is looking for any event that matches the alias of your lab environment. This is defined in the `conditions` section of the rulebook.
+
+The **action** here is using the debug action to simply print out any event that matches the conditions defined in the rule.
+
+#### Running the Detection Example Rulebook
+
+Let's run the `detection-example.yml` rulebook to see how it works.
+
+```bash
+ansible-rulebook -i inventory -r rulebooks/detection-example.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET -v
+```
+
+Recall that this is different from running an Ansible playbook. To pass in the required environment variables, we are using the `-E` flag followed by the environment variables that need to be set.
+
+At this point, we shouldn't see any output. This is because we haven't triggered any events that match the conditions defined in the rulebook.
+
+##### Triggering an Event
+
+Hop over to your **`sketchy-cat1`** vm and run the following command to generate an event that matches the conditions defined in the rulebook.
+
+```bash
+bash crowdstrike_test_low
+```
+
+> [!NOTE]
+> Don't worry about the output of the command. The important part is that it generates an event that matches the conditions defined in the rulebook.
+
+Now come back to the **`ansible`** vm and let's wait for the event to be delivered. Once the event is delivered, you should see the event printed out in the terminal.
+
+Cancel the rulebook execution by pressing `Ctrl + C` to stop the rulebook execution.
+
+> [!NOTE]
+> Recall that this is not real-time and the time it takes for an event to be delivered can vary.
+
+---
+
+### Demo Detection Events Rulebook
+
+Now that we have seen how the `detection-example.yml` rulebook works, let's take a look at the `detection-demo.yml` rulebook in the `rulebooks` directory.
+
+Review the contents of the `detection-demo.yml` rulebook
+
+```bash
+cat rulebooks/detection-demo.yml
+```
+
+This rulebook is similar to the `detection-example.yml` rulebook, but it has a few additional conditions defined in the rule section.
+
+What we are defining now is that we only want to respond to detection events that are from our lab environment and have a severity greater than a Medium severity level.
+
+The action defined in this rulebook is to run the `host_contain.yml` playbook located in the `playbooks` directory. This playbook will contain the logic to log the information in a way that a security analyst could review, and then contain the host using the `crowdstrike.falcon.host_contain` Ansible module.
+
+> [!TIP]
+> Think of all the different ways you could respond to an event. The possibilities are endless! A slack message, a ServiceNow ticket, a cloud provider action, etc.
+
+#### Running the Detection Demo Rulebook
+
+Let's run the `detection-demo.yml` rulebook to see it in action
+
+```bash
+ansible-rulebook -i inventory -r rulebooks/detection-demo.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET -v
+```
+
+Just like before, we shouldn't see any output. This is because we haven't triggered any events that match the conditions defined in the rulebook.
+
+##### Triggering an Event
+
+Hop over to your **`sketchy-cat1`** vm and run the following command to generate an event that matches the conditions defined in the rulebook.
+
+```bash
+bash crowdstrike_test_high
+```
+
+> [!NOTE]
+> Don't worry about the output of the command. The important part is that it generates an event that matches the conditions defined in the rulebook.
+
+Now come back to the **`ansible`** vm and let's wait for the event to be delivered. Once the event is delivered, you should see the `host_contain.yml` playbook being executed.
+
+##### Review the Log
+
+Cancel the rulebook execution by pressing `Ctrl + C` and review the log file that was created.
+
+```bash
+less ~/detection_events.log
+```
+
+##### Verify the Host Containment
+
+You can follow the Detection URL in the log file to verify that the host was contained.
+
+You could also try going to the the **`sketchy-cat1`** vm and seeing if it's responsive.
+
+Congratulations! You have successfully monitored and responded to CrowdStrike Falcon events using Ansible EDA.
