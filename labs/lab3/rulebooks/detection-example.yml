@@ -13,7 +13,7 @@
 
   rules:
     - name: Show me the carfox
-      condition: event.falcon.event.ComputerName is match('weepy-goat')
+      condition: event.falcon.event.ComputerName is match('YOUR_ALIAS')
       action:
         debug:
           msg: |

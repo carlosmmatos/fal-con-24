@@ -1,4 +1,4 @@
-# Lab 3: React with Ansible EDA
+# Lab 3: React with Event-Driven Ansible (EDA)
 
 ## Overview
 
@@ -11,7 +11,7 @@ In this lab, you will learn how to leverage the Event Streams API via the `crowd
 
 By the end of this lab, you will be able to:
 
-- Understand the potential for using Ansible EDA to monitor and respond to CrowdStrike Falcon events
+- Understand the potential for using EDA to monitor and respond to CrowdStrike Falcon events
 - Create rules and conditions to filter events
 - Respond to events using Ansible playbooks
 
@@ -37,21 +37,21 @@ By the end of this lab, you will be able to:
         └── detection-example.yml
     ```
 
-This lab consists of a `rulebooks` directory that contains two EDA rulebooks that will be used to demonstrate how to monitor and respond to CrowdStrike Falcon events using Ansible EDA. The `playbooks` directory contains Ansible playbooks that will show high-level examples of how to respond to events.
+This lab consists of a `rulebooks` directory that contains two EDA rulebooks that will be used to demonstrate how to monitor and respond to CrowdStrike Falcon events using EDA. The `playbooks` directory contains Ansible playbooks that will show high-level examples of how to respond to events.
 
 ## Rulebooks
 
 > [!IMPORTANT]
-> Rulebooks are not to be confused with Ansible playbooks. Even though they follow a similar structure, Rulebooks operate separately from Ansible core itself.
+> EDA Rulebooks are not to be confused with Ansible playbooks. Even though they follow a similar structure, Rulebooks operate separately from Ansible core itself.
 
-Rulesbooks in Ansible EDA are YAML files that define how your system should respond to events. They are broken out into three main sections:
+Rulebooks in EDA are YAML files that define how your system should respond to events. They are broken out into three main sections:
 
 - **Sources**: Define the sources of events that you want to monitor
 - **Rules**: Define the conditions that must be met for an event to trigger a response
 - **Actions**: Define the actions that should be taken when an event meets the conditions defined in the rules
 
 > [!NOTE]
-> For more information on rulebooks, see the [Ansible EDA documentation](https://ansible.readthedocs.io/projects/rulebook/en/latest/introduction.html#why-rulebooks).
+> For more information on rulebooks, see the [EDA documentation](https://ansible.readthedocs.io/projects/rulebook/en/latest/introduction.html#why-rulebooks).
 
 ### Example Detection Events Rulebook
 
@@ -120,11 +120,23 @@ What we are defining now is that we only want to respond to detection events tha
 
 The action defined if the condition matches is to run the `host-contain.yml` playbook located in the `playbooks` directory. This playbook will contain the logic to log the information in a way that a security analyst could review, and then contain the host using the `crowdstrike.falcon.host_contain` Ansible module.
 
+Review the contents of the `host-contain.yml` playbook
+
+```bash
+cat playbooks/host-contain.yml
+```
+
 #### Rule 2
 
 We also have another rule that is watching for containment events. These events belong to the `UserActivityAuditEvent` event type.
 
 The action defined if the condition matches is to run the `debug-containment.yml` playbook located in the `playbooks` directory. This playbook will print out the event information in a formatted way.
+
+Review the contents of the `debug-containment.yml` playbook
+
+```bash
+cat playbooks/debug-containment.yml
+```
 
 > [!TIP]
 > Think of all the different ways you could respond to an event. The possibilities are endless! A slack message, a ServiceNow ticket, a cloud provider action, etc.
@@ -167,4 +179,19 @@ You can follow the Detection URL in the log file to verify that the host was con
 
 You could also try going to the the **`sketchy-cat1`** vm and seeing if it's responsive.
 
-Congratulations! You have successfully monitored and responded to CrowdStrike Falcon events using Ansible EDA.
+##### Lift the Containment
+
+Let's run the `detection-demo.yml` rulebook again to see the containment being lifted.
+
+```bash
+ansible-rulebook -i inventory -r rulebooks/detection-demo.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET
+```
+
+In the console, select the `Lift Containment` option to lift the containment on the host.
+
+You should see the `debug-containment.yml` playbook being executed once the event is delivered.
+
+press `Ctrl + C` to stop the rulebook execution.
+
+---
+Congratulations! You have successfully monitored and responded to CrowdStrike Falcon events using EDA.

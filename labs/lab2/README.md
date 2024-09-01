@@ -310,19 +310,16 @@ ansible-playbook -i demo.falcon_discover.yml deploy-falcon.yml
 
 #### Validate the deployment
 
-Sweet! You've just deployed the Falcon sensor to the unmanaged assets in your environment. You can now view the assets in the Falcon UI or we can also modify the `demo.falcon_discover.yml` file to filter for the assets with the Falcon sensor installed (aka managed assets).
+Sweet! You've just deployed the Falcon sensor to the unmanaged assets in your environment. You can now view the assets in the Falcon UI or we can use the dynamic inventory to check for the assets with the Falcon sensor installed (aka managed assets).
 
-Update our previous filter to remove the entity_type so that it looks like this:
-
-```yaml
-filter: "cloud_account_id:'<your-aws-account-id>'"
-```
-
-Save the file and run the `ansible-inventory` with the `managed_assets` group to view the filtered assets
+Run the `ansible-inventory` with the `managed_assets` group to view the filtered assets
 
 ```bash
-ansible-inventory -i demo.falcon_discover.yml --list managed_assets | less
+ansible-inventory -i demo.falcon_discover.yml --list -l managed_assets | less
 ```
+
+> [!NOTE]
+> If you don't see the managed assets, you may need to wait a few minutes for the sensor to check in and for the API to update.
 
 Congratulations! You have successfully deployed the Falcon sensor to the unmanaged assets in your environment.
 
