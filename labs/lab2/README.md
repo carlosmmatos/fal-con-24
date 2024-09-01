@@ -245,18 +245,18 @@ ansible-inventory -i demo.falcon_discover.yml --graph sketchy_<your-aws-account-
 
 Let's deploy the Falcon sensor against the unmanaged assets in our environment.
 
-Run the following command to view the filters you can use to specifically target the unmanaged assets in your environment:
+Run the following command to view the filters you can use to help target the unmanaged assets in your environment:
 
 ```bash
 discover-filters
 ```
 
-This gives you 2 different filters you can use to target the unmanaged assets in your environment. You can use either one of them to target the unmanaged assets. Let's use the first filter to target the unmanaged assets and then validate our inventory looks correct.
+Either one can be used to filter down. However, for this lab we will use the first filter as we want to be able to see all the assets in our AWS account and use the groups we created earlier to target the unmanaged assets.
 
 Add the following line to the `demo.falcon_discover.yml` file:
 
 ```yaml
-filter: "entity_type:'unmanaged' + cloud_account_id:'<your-aws-account-id>'"
+filter: "cloud_account_id:'<your-aws-account-id>'"
 ```
 
 Save the file and run the `ansible-inventory` with the `unmanaged_assets` group to view the filtered assets

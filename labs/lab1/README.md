@@ -14,7 +14,7 @@ ansible-galaxy collection install crowdstrike.falcon
 Let's make sure we install the python dependencies for the collection.
 
 ```bash
-pip install --user crowdstrike-falconpy aiohttp
+pip install --no-color --user crowdstrike-falconpy aiohttp
 ```
 
 ## Testing the Installation

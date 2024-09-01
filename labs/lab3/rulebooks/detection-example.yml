@@ -6,17 +6,24 @@
         falcon_client_id: "{{ FALCON_CLIENT_ID }}"
         falcon_client_secret: "{{ FALCON_CLIENT_SECRET }}"
         falcon_cloud: "us-2"
+        latest: true
         stream_name: "YOUR_ALIAS-example"
         include_event_types:
           - "DetectionSummaryEvent"
 
   rules:
     - name: Show me the carfox
-      condition: event.falcon.event.ComputerName is match('YOUR_ALIAS')
+      condition: event.falcon.event.ComputerName is match('weepy-goat')
       action:
         debug:
-          msg:
-            - "Found detection on {{ event.falcon.event.ComputerName }}"
-            - "Detection Severity: {{ event.falcon.event.Severity }}"
-            - "Offset: {{ event.falcon.metadata.offset }}"
-            - "Payload: {{ event.falcon.event }}"
+          msg: |
+
+            Found detection on {{ event.falcon.event.ComputerName }}
+
+            Detection Severity: {{ event.falcon.event.SeverityName }}
+
+            Detection Severity Level: {{ event.falcon.event.Severity }}
+
+            Offset: {{ event.falcon.metadata.offset }}
+
+            Payload: {{ event.falcon.event }}

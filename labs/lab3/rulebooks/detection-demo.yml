@@ -6,19 +6,31 @@
         falcon_client_id: "{{ FALCON_CLIENT_ID }}"
         falcon_client_secret: "{{ FALCON_CLIENT_SECRET }}"
         falcon_cloud: "us-2"
+        latest: true
         stream_name: "YOUR_ALIAS-example"
         include_event_types:
           - "DetectionSummaryEvent"
+          - "UserActivityAuditEvent"
 
   rules:
     - name: Host contain demo
       condition: event.falcon.event.ComputerName is match('YOUR_ALIAS') and event.falcon.event.Severity > 3
       action:
         run_playbook:
-          name: playbooks/host_contain.yml
+          name: playbooks/host-contain.yml
           extra_vars:
             computer_name: "{{ event.falcon.event.ComputerName }}"
             detection_description: "{{ event.falcon.event.DetectDescription }}"
             host_id: "{{ event.falcon.event.SensorId }}"
             detection_id: "{{ event.falcon.event.DetectId }}"
             detection_url: "{{ event.falcon.event.FalconHostLink }}"
+
+    - name: Respond to host containment activity
+      condition: event.falcon.event.OperationName is search('containment')
+      action:
+        run_playbook:
+          name: playbooks/debug-containment.yml
+          extra_vars:
+            utc_timestamp: "{{ event.falcon.event.UTCTimestamp }}"
+            host_id: "{{ event.falcon.event.Attributes.SensorId }}"
+            operation: "{{ event.falcon.event.OperationName }}"

@@ -30,13 +30,14 @@ By the end of this lab, you will be able to:
     ├── README.md
     ├── inventory
     ├── playbooks
-    │   └── host_contain.yml
+    │   ├── debug-containment.yml
+    │   └── host-contain.yml
     └── rulebooks
         ├── detection-demo.yml
         └── detection-example.yml
     ```
 
-This lab consists of a `rulebooks` directory that contains two rulebooks that will be used to demonstrate how to monitor and respond to CrowdStrike Falcon events using Ansible EDA. The `playbooks` directory contains a playbook that will show a high-level example of how to respond to events.
+This lab consists of a `rulebooks` directory that contains two EDA rulebooks that will be used to demonstrate how to monitor and respond to CrowdStrike Falcon events using Ansible EDA. The `playbooks` directory contains Ansible playbooks that will show high-level examples of how to respond to events.
 
 ## Rulebooks
 
@@ -68,14 +69,14 @@ You can see that for the **source**, we are using the `crowdstrike.falcon.events
 
 The **rule** defined in this rulebook is looking for any event that matches the alias of your lab environment. This is defined in the `conditions` section of the rulebook.
 
-The **action** here is using the debug action to simply print out any event that matches the conditions defined in the rule.
+The **action** here is using the debug action to print out a formatted message of any event that matches the conditions defined in the rule.
 
 #### Running the Detection Example Rulebook
 
 Let's run the `detection-example.yml` rulebook to see how it works.
 
 ```bash
-ansible-rulebook -i inventory -r rulebooks/detection-example.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET -v
+ansible-rulebook -i inventory -r rulebooks/detection-example.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET
 ```
 
 Recall that this is different from running an Ansible playbook. To pass in the required environment variables, we are using the `-E` flag followed by the environment variables that need to be set.
@@ -87,18 +88,17 @@ At this point, we shouldn't see any output. This is because we haven't triggered
 Hop over to your **`sketchy-cat1`** vm and run the following command to generate an event that matches the conditions defined in the rulebook.
 
 ```bash
-bash crowdstrike_test_low
+bash crowdstrike_test_low > /dev/null 2>&1
 ```
 
-> [!NOTE]
-> Don't worry about the output of the command. The important part is that it generates an event that matches the conditions defined in the rulebook.
+> This command generates an Overwatch severity level low event that matches the conditions defined in the rulebook.
 
 Now come back to the **`ansible`** vm and let's wait for the event to be delivered. Once the event is delivered, you should see the event printed out in the terminal.
 
-Cancel the rulebook execution by pressing `Ctrl + C` to stop the rulebook execution.
-
 > [!NOTE]
 > Recall that this is not real-time and the time it takes for an event to be delivered can vary.
+
+Cancel the rulebook execution by pressing `Ctrl + C` to stop the rulebook execution.
 
 ---
 
@@ -112,11 +112,19 @@ Review the contents of the `detection-demo.yml` rulebook
 cat rulebooks/detection-demo.yml
 ```
 
-This rulebook is similar to the `detection-example.yml` rulebook, but it has a few additional conditions defined in the rule section.
+This rulebook is similar to the `detection-example.yml` rulebook, but it has a few additional conditions defined in the rule section and an extra event type to include.
+
+#### Rule 1
 
 What we are defining now is that we only want to respond to detection events that are from our lab environment and have a severity greater than a Medium severity level.
 
-The action defined in this rulebook is to run the `host_contain.yml` playbook located in the `playbooks` directory. This playbook will contain the logic to log the information in a way that a security analyst could review, and then contain the host using the `crowdstrike.falcon.host_contain` Ansible module.
+The action defined if the condition matches is to run the `host-contain.yml` playbook located in the `playbooks` directory. This playbook will contain the logic to log the information in a way that a security analyst could review, and then contain the host using the `crowdstrike.falcon.host_contain` Ansible module.
+
+#### Rule 2
+
+We also have another rule that is watching for containment events. These events belong to the `UserActivityAuditEvent` event type.
+
+The action defined if the condition matches is to run the `debug-containment.yml` playbook located in the `playbooks` directory. This playbook will print out the event information in a formatted way.
 
 > [!TIP]
 > Think of all the different ways you could respond to an event. The possibilities are endless! A slack message, a ServiceNow ticket, a cloud provider action, etc.
@@ -136,13 +144,14 @@ Just like before, we shouldn't see any output. This is because we haven't trigge
 Hop over to your **`sketchy-cat1`** vm and run the following command to generate an event that matches the conditions defined in the rulebook.
 
 ```bash
-bash crowdstrike_test_high
+bash crowdstrike_test_high > /dev/null 2>&1
 ```
 
-> [!NOTE]
-> Don't worry about the output of the command. The important part is that it generates an event that matches the conditions defined in the rulebook.
+> This command generates an Overwatch severity level high event that matches the conditions defined in the rulebook.
 
 Now come back to the **`ansible`** vm and let's wait for the event to be delivered. Once the event is delivered, you should see the `host_contain.yml` playbook being executed.
+
+Since the `host_contain.yml` playbook attempts to contain the host, we should also see the `debug-containment.yml` playbook being executed once the event is delivered.
 
 ##### Review the Log
 
