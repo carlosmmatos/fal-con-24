@@ -4,7 +4,7 @@
   connection: local
   gather_facts: false
   vars:
-    log_file: "/home/ubuntu/detection_events.log"
+    log_file: "/home/ubuntu/labs/lab3/logs/{{ computer_name }}.log"
   tasks:
     - name: Prepare format for event data
       ansible.builtin.set_fact:
