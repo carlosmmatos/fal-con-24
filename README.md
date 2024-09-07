@@ -4,7 +4,7 @@ CrowdStrike + Ansible: Automating Security Beyond Sensor Deployment Lab for Fal.
 
 ## Overview
 
-This lab is designed to provide a hands-on experience with CrowdStrike Falcon and Ansible leveragin the certified CrowdStrike Falcon Ansible Collection. The labs will cover the following topics:
+This lab is designed to provide a hands-on experience with CrowdStrike Falcon and Ansible leveraging the certified CrowdStrike Falcon Ansible Collection. The labs will cover the following topics:
 
 - Installing and getting started with the CrowdStrike Falcon Ansible Collection
 - Combatting shadow IT with CrowdStrike Falcon Ansible dynamic inventories
