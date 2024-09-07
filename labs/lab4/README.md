@@ -2,7 +2,7 @@
 
 ## Overview
 
-In this lab, you will learn how to leverage the CrowdStrike Falcon modules and plugins for Ansible  within your environment, moving outside of traditional sensor deployment.
+In this lab, you will learn how to leverage the CrowdStrike Falcon modules and plugins for Ansible within your environment, moving outside of traditional sensor deployment.
 
 ## Objectives
 
