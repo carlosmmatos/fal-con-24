@@ -57,20 +57,6 @@ Save the file and run the `ansible-inventory` command to view the filtered asset
 ansible-inventory -i demo.falcon_discover.yml --list | less
 ```
 
-#### View all unmanaged assets in our environment
-
-***Recomment the previous line*** and uncomment the following line in the `demo.falcon_discover.yml` file:
-
-```yaml
-#filter: "entity_type:'unmanaged'+first_seen_timestamp:>'now-1d'"
-```
-
-Save the file and run the `ansible-inventory` command to view the filtered assets
-
-```bash
-ansible-inventory -i demo.falcon_discover.yml --list | less
-```
-
 #### View all the 'ansible' lab VMs in our environment
 
 ***Recomment the previous line*** and uncomment the following line in the `demo.falcon_discover.yml` file:
@@ -108,7 +94,7 @@ Under the `keyed_groups` section in the `demo.falcon_discover.yml` file, uncomme
 Save the file and run the `ansible-inventory` command to view the grouped assets
 
 ```bash
-ansible-inventory -i demo.falcon_discover.yml --graph
+ansible-inventory -i demo.falcon_discover.yml --graph | less
 ```
 
 #### Groups
@@ -125,7 +111,7 @@ Under the `groups` section in the `demo.falcon_discover.yml` file, uncomment the
 This creates 2 groups that contains all the unmanaged and managed assets in our environment. Save the file and run the `ansible-inventory` command to view the grouped assets
 
 ```bash
-ansible-inventory -i demo.falcon_discover.yml --graph
+ansible-inventory -i demo.falcon_discover.yml --graph | less
 ```
 
 ### Modify Host Variables
@@ -203,7 +189,7 @@ Uncomment the following line in the `demo.falcon_discover.yml` file:
 What this does is that if the hostnames already exist in the inventory, it will append a unique identifier (*the Asset ID*) to the hostname to make it unique. Save the file and run the `ansible-inventory` command to view the assets with the unique identifiers
 
 ```bash
-ansible-inventory -i demo.falcon_discover.yml --graph
+ansible-inventory -i demo.falcon_discover.yml --graph | less
 ```
 
 #### Modify the keyed_groups to group assets by `cloud_account_id`
@@ -220,7 +206,7 @@ To clean it up, we can use another unique identifier to group the assets. In our
 Save the file and run the `ansible-inventory` command to view the new grouped assets
 
 ```bash
-ansible-inventory -i demo.falcon_discover.yml --graph
+ansible-inventory -i demo.falcon_discover.yml --graph | less
 ```
 
 Look at all those unique groups! But which one is yours?

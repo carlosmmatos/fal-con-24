@@ -7,7 +7,7 @@
     - name: Build API filter based on sketchy-cat1
       ansible.builtin.set_fact:
         sensor_filter: "os:'{{ ansible_facts['distribution'] }}*'\
-          + os_version:'*{{ ansible_facts['distribution_major_version'] }}*'\
+          + os_version:'{{ ansible_facts['distribution_major_version'] }}'\
           + architectures:'{{ ansible_facts['architecture'] }}'"
 
     - name: Get list of filtered Falcon sensors

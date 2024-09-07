@@ -77,7 +77,7 @@ The **action** here is using the debug action to print out a formatted message o
 Let's run the `detection-example.yml` rulebook to see how it works.
 
 ```bash
-ansible-rulebook -i inventory -r rulebooks/detection-example.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET
+ansible-rulebook -i inventory -r rulebooks/detection-example.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET -v | tee output.txt
 ```
 
 Recall that this is different from running an Ansible playbook. To pass in the required environment variables, we are using the `-E` flag followed by the environment variables that need to be set.
@@ -113,6 +113,8 @@ Review the contents of the `detection-demo.yml` rulebook
 cat rulebooks/detection-demo.yml
 ```
 
+> For more information surrounding Event Types, see the following [CrowdStrike documentation](https://falcon.crowdstrike.com/login/?unilogin=true&next=/documentation/page/d88d9ed6/streaming-api-event-dictionary).
+
 This rulebook is similar to the `detection-example.yml` rulebook, but it has a few additional conditions defined in the rule section and an extra event type to include.
 
 #### Rule 1
@@ -147,7 +149,7 @@ cat playbooks/debug-containment.yml
 Let's run the `detection-demo.yml` rulebook to see it in action
 
 ```bash
-ansible-rulebook -i inventory -r rulebooks/detection-demo.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET -v
+ansible-rulebook -i inventory -r rulebooks/detection-demo.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET -v | tee output.txt
 ```
 
 Just like before, we shouldn't see any output. This is because we haven't triggered any events that match the conditions defined in the rulebook.
@@ -171,7 +173,7 @@ Since the `host_contain.yml` playbook attempts to contain the host, we should al
 Cancel the rulebook execution by pressing `Ctrl + C` and review the log file that was created.
 
 ```bash
-less ~/detection_events.log
+less logs/*sketchy-cat1*.log
 ```
 
 ##### Verify the Host Containment
@@ -185,7 +187,7 @@ You could also try going to the the **`sketchy-cat1`** vm and seeing if it's res
 Let's run the `detection-demo.yml` rulebook again to see the containment being lifted.
 
 ```bash
-ansible-rulebook -i inventory -r rulebooks/detection-demo.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET
+ansible-rulebook -i inventory -r rulebooks/detection-demo.yml -E FALCON_CLIENT_ID,FALCON_CLIENT_SECRET -v
 ```
 
 In the console, select the `Lift Containment` option to lift the containment on the host.
@@ -195,4 +197,4 @@ You should see the `debug-containment.yml` playbook being executed once the even
 press `Ctrl + C` to stop the rulebook execution.
 
 ---
-Congratulations! You have successfully monitored and responded to CrowdStrike Falcon events using EDA.
+Congratulations! You have successfully monitored and responded to CrowdStrike Falcon detection events using EDA.
