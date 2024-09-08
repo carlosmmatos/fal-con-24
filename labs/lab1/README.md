@@ -19,7 +19,7 @@ pip install --user crowdstrike-falconpy aiohttp
 
 ## Testing the Installation
 
-To test the installation, we can run Ansible against the simple playbook `get-token.yml` that uses the `crowdstrike.falcon.auth` module to get an OAuth2 token.
+To test the installation, we can run Ansible against a simple playbook `get-token.yml` that uses the `crowdstrike.falcon.auth` module to get an OAuth2 token.
 
 ```bash
 ansible-playbook get-token.yml -v

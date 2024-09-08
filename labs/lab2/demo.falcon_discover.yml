@@ -27,23 +27,23 @@ plugin: crowdstrike.falcon.falcon_discover
 keyed_groups:
   # places host in a group named cloud_<cloud_provider> (e.g. cloud_AWS) if the asset is a cloud asset
   # - prefix: cloud
-  #  key: cloud_provider
+  #   key: cloud_provider
   # places host in a group named platform_<platform_name> based on the platform name (Linux, Windows, etc.)
   # - prefix: platform
-  #  key: platform_name
+  #   key: platform_name
   # places host in a group named tag_<tags> for each tag on a host
   # - prefix: tag
-  #  key: tags
+  #   key: tags
   # places host in a group named rfm_<Yes|No> to see if the host is in reduced functionality mode
   # - prefix: rfm
-  #  key: reduced_functionality_mode
+  #   key: reduced_functionality_mode
   # places host in a group named location_<city> based on the city the host is located in
   # - prefix: location
-  #  key: city
+  #   key: city
   # places host in a group names sketch_<account_id> based on the account_id of the host
   # useful for duplicate hostnames in different cloud accounts
   # - prefix: sketchy
-  #  key: cloud_account_id
+  #   key: cloud_account_id
 
 # place hosts in named groups based on conditional statements <evaluated as true>
 groups:

@@ -32,7 +32,7 @@ By the end of this lab, you will be able to:
 1. Run the `ansible-inventory` command to view the assets identified by the Falcon Discover dynamic inventory
 
     ```bash
-    ansible-inventory -i demo.falcon_discover.yml --graph
+    ansible-inventory -i demo.falcon_discover.yml --graph | less
     ```
 
 1. Run the `ansible-inventory` command this time with the `--list` option to see a more detailed view of the assets identified by the Falcon Discover dynamic inventory
@@ -48,7 +48,7 @@ By the end of this lab, you will be able to:
 Uncomment the following line in the `demo.falcon_discover.yml` file:
 
 ```yaml
-#filter: "cloud_provider:'AWS'"
+# filter: "cloud_provider:'AWS'"
 ```
 
 Save the file and run the `ansible-inventory` command to view the filtered assets
@@ -62,7 +62,7 @@ ansible-inventory -i demo.falcon_discover.yml --list | less
 ***Recomment the previous line*** and uncomment the following line in the `demo.falcon_discover.yml` file:
 
 ```yaml
-#filter: hostname:*'*-ansible'
+# filter: hostname:*'*-ansible'
 ```
 
 Save the file and run the `ansible-inventory` command to view the filtered assets
@@ -87,8 +87,8 @@ Now that we have seen how to filter assets, let's group them to make it easier t
 Under the `keyed_groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
 ```yaml
-#- prefix: cloud
-#  key: cloud_provider
+# - prefix: cloud
+#   key: cloud_provider
 ```
 
 Save the file and run the `ansible-inventory` command to view the grouped assets
@@ -104,8 +104,8 @@ ansible-inventory -i demo.falcon_discover.yml --graph | less
 Under the `groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
 ```yaml
-#unmanaged_assets: "entity_type == 'unmanaged'"
-#managed_assets: "entity_type == 'managed'"
+# unmanaged_assets: "entity_type == 'unmanaged'"
+# managed_assets: "entity_type == 'managed'"
 ```
 
 This creates 2 groups that contains all the unmanaged and managed assets in our environment. Save the file and run the `ansible-inventory` command to view the grouped assets
@@ -116,7 +116,7 @@ ansible-inventory -i demo.falcon_discover.yml --graph | less
 
 ### Modify Host Variables
 
-The compose section of the `demo.falcon_discover.yml` file allows us to modify the host variables. In this section, we can add or modify variables for each host using jinja2 templating.
+The compose section of the `demo.falcon_discover.yml` file allows us to modify the host variables. In this section, we can add or modify variables for each host using Jinja2 templating.
 
 #### View host variables for a specific host
 
@@ -132,7 +132,7 @@ ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2
 Under the `compose` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
 ```yaml
-#ansible_host: local_ip_addresses[0]
+# ansible_host: local_ip_addresses[0]
 ```
 
 This sets the `ansible_host` variable to the first local IP address of the host. Save the file and run the `ansible-inventory` command to view the modified host variables
@@ -146,7 +146,7 @@ ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2
 Under the `compose` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
 ```yaml
-#ansible_user: ec2-user
+# ansible_user: ec2-user
 ```
 
 This sets the `ansible_user` variable to 'ec2-user'. Save the file and run the `ansible-inventory` command to view the modified host variables across all hosts
@@ -183,7 +183,7 @@ In order to allow duplicate hostnames, we can append a unique identifier to the 
 Uncomment the following line in the `demo.falcon_discover.yml` file:
 
 ```yaml
-#allow_duplicates: true
+# allow_duplicates: true
 ```
 
 What this does is that if the hostnames already exist in the inventory, it will append a unique identifier (*the Asset ID*) to the hostname to make it unique. Save the file and run the `ansible-inventory` command to view the assets with the unique identifiers
