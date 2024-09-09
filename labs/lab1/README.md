@@ -37,7 +37,7 @@ TASK [Generate Authentication Credentials (access token and cloud region)] *****
 ok: [localhost] => changed=false
   auth:
     access_token: <ACCESS_TOKEN>
-    cloud: us-2
+    cloud: us-1
 
 PLAY RECAP **************************************************************************************
 localhost: ok=1    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
