@@ -15,7 +15,7 @@
         path: "{{ log_file }}"
         line: |
           {{ lookup('pipe', 'date') }}
-          WARNING: Detection event detected on {{ computer_name }}!
+          WARNING: A {{ severity_name }} Detection event detected on {{ computer_name }}!
 
           Detection ID: {{ detection_id }}
           Detection Description: {{ detection_description }}
@@ -40,7 +40,3 @@
         path: "{{ log_file }}"
         line: |
           {{ computer_name }} was successfully contained.
-
-          Detection URL: {{ detection_url }}
-
-          For more information, visit the Detection URL above.

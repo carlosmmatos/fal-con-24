@@ -126,7 +126,7 @@ The action defined if the condition matches is to run the `host-contain.yml` pla
 Review the contents of the `host-contain.yml` playbook
 
 ```bash
-cat playbooks/host-contain.yml
+less playbooks/host-contain.yml
 ```
 
 #### Rule 2

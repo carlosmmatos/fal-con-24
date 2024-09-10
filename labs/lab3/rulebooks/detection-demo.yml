@@ -23,7 +23,7 @@
             detection_description: "{{ event.falcon.event.DetectDescription }}"
             host_id: "{{ event.falcon.event.SensorId }}"
             detection_id: "{{ event.falcon.event.DetectId }}"
-            detection_url: "{{ event.falcon.event.FalconHostLink }}"
+            severity_name: "{{ event.falcon.event.SeverityName }}"
 
     - name: Respond to host containment activity
       condition: event.falcon.event.OperationName is search('containment')
