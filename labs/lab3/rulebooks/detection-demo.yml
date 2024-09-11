@@ -7,7 +7,7 @@
         falcon_client_secret: "{{ FALCON_CLIENT_SECRET }}"
         falcon_cloud: "us-1"
         latest: true
-        stream_name: "YOUR_ALIAS-example"
+        stream_name: "YOUR_ALIAS-example-2"
         include_event_types:
           - "DetectionSummaryEvent"
           - "UserActivityAuditEvent"
