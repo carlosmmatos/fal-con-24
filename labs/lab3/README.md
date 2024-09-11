@@ -178,7 +178,7 @@ less logs/*sketchy-cat1*.log
 
 ##### Verify the Host Containment
 
-You can follow the Detection URL in the log file to verify that the host was contained.
+Open the CrowdStrike Falcon console and navigate to the **`Endpoint security`** --> **`Endpoint detections`** section and filter by either your host or tag. Click on the detection and browse around. Notice on the right hand pane, if you scroll down to Host you will see the host is currently **Contained**!
 
 You could also try going to the the **`sketchy-cat1`** vm and seeing if it's responsive.
 

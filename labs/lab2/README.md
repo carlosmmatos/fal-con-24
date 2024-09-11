@@ -29,13 +29,19 @@ By the end of this lab, you will be able to:
     less demo.falcon_discover.yml
     ```
 
-1. Run the `ansible-inventory` command to view the assets identified by the Falcon Discover dynamic inventory
+    > If you are not familiar with Ansible dynamic inventories, you can read more about them [here](https://docs.ansible.com/ansible/latest/user_guide/intro_dynamic_inventory.html).
+
+The `ansible-inventory` command is a nifty utility Ansible provides to help you understand what Ansible sees from an inventory perspective.
+
+In our case, we will use it to help us visualize our Falcon Discover dynamic inventory.
+
+3. Run the `ansible-inventory` command to view the assets identified by the Falcon Discover dynamic inventory
 
     ```bash
     ansible-inventory -i demo.falcon_discover.yml --graph | less
     ```
 
-1. Run the `ansible-inventory` command this time with the `--list` option to see a more detailed view of the assets identified by the Falcon Discover dynamic inventory
+4. Run the `ansible-inventory` command this time with the `--list` option to see a more detailed view of the assets identified by the Falcon Discover dynamic inventory
 
     ```bash
     ansible-inventory -i demo.falcon_discover.yml --list | less
@@ -44,6 +50,8 @@ By the end of this lab, you will be able to:
 ### Filter Assets
 
 #### View all AWS assets in our environment
+
+Now that we know how to view our inventory hosts, let's start to play with filter. In this example, we are going to return only AWS assets.
 
 Uncomment the following line in the `demo.falcon_discover.yml` file:
 
@@ -58,6 +66,8 @@ ansible-inventory -i demo.falcon_discover.yml --list | less
 ```
 
 #### View all the 'ansible' lab VMs in our environment
+
+The previous filter showed us all AWS assets, let's take a look at all the 'ansible' lab vm's in the environment.
 
 ***Recomment the previous line*** and uncomment the following line in the `demo.falcon_discover.yml` file:
 
@@ -97,9 +107,11 @@ Save the file and run the `ansible-inventory` command to view the grouped assets
 ansible-inventory -i demo.falcon_discover.yml --graph | less
 ```
 
-#### Groups
+#### Conditional Groups
 
 ##### Group assets by `entity_type`
+
+`groups` are created using Jinja2 conditionals. Let's group our assets by their `entity_type`.
 
 Under the `groups` section in the `demo.falcon_discover.yml` file, uncomment the following lines:
 
@@ -162,21 +174,21 @@ Now that we have seen how to filter, group, and modify host variables, let's use
 > [!WARNING]
 > Duplicate hostnames are not allowed in Ansible. If you have duplicate hostnames in your environment, you will need to modify the `demo.falcon_discover.yml` file to ensure that each host has a unique hostname. See the below for examples on how to accomplish this.
 
-In this lab, we all have a unique alias assigned to our lab VMs. For example, on your `ansible` VM you will see the hostname as `<alias>-ansible`.
+In this lab, we all have a unique alias assigned to our lab VMs. For example, on your `ansible` VM you will see the hostname as `<your-alias>-ansible`.
 
 You also have 2 unmanaged assets in your environment with the following hostnames:
 
-- `<alias>-sketchy-cat1`
-- `<alias>-sketchy-cat2`
+- `<your-alias>-sketchy-cat1`
+- `<your-alias>-sketchy-cat2`
 
 Since the Falcon Discover API can't read OS level information about the unmanaged assets, it instead is using the aws hostname as the hostname for the unmanaged assets. This means that everyone in the lab will have the same unmanaged assets in their environment.
 
-- `ip-172-17-0-20.us-west-2.compute.internal`
-- `ip-172-17-0-30.us-west-2.compute.internal`
+- `ip-172-17-0-20.us-west-2.compute.internal` (aka **sketchy-cat1**)
+- `ip-172-17-0-30.us-west-2.compute.internal` (aka **sketchy-cat2**)
 
 So how do we target the correct assets?
 
-#### Allow duplicate hostnames
+#### Dealing with duplicates
 
 In order to allow duplicate hostnames, we can append a unique identifier to the hostname to make it unique.
 

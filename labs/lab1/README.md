@@ -11,6 +11,8 @@ To install the collection, you can use the `ansible-galaxy` command line tool. T
 ansible-galaxy collection install crowdstrike.falcon
 ```
 
+The modules in the CrowdStrike Falcon Ansible collection are powered by FalconPy! The Event-Driven Ansible source plugin is powered by the aiohttp Python library.
+
 Let's make sure we install the python dependencies for the collection.
 
 ```bash
