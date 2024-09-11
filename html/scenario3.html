@@ -33,7 +33,7 @@
     <p class="admonition-padding">Please note that events are not guaranteed to be delivered in real-time. The time it takes for an event to be delivered can vary based on
         the current load on the CrowdStrike Event Streams service along with other factors.</p>
     <p>By the end of this lab, you will be able to:</p>
-    <ul style="text-align: left;">
+    <ul style="text-align: left; list-style-position: inside;">
         <li>Understand the potential for using EDA to monitor and respond to CrowdStrike Falcon events</li>
         <li>Create rules and conditions to filter events</li>
         <li>Respond to events using Ansible playbooks</li>
@@ -100,9 +100,9 @@
 
             <p>Rulebooks in EDA are YAML files that define how your system should respond to events. They are broken out into three main sections:</p>
             <ul>
-                <li><b style="padding: unset;">Sources</b>: Define the sources of events that you want to monitor</li>
-                <li><b style="padding: unset;">Rules</b>: Define the conditions that must be met for an event to trigger a response</li>
-                <li><b style="padding: unset;">Actions</b>: Define the actions that should be taken when an event meets the conditions defined in the rules</li>
+                <li><b>Sources</b>: Define the sources of events that you want to monitor</li>
+                <li><b>Rules</b>: Define the conditions that must be met for an event to trigger a response</li>
+                <li><b>Actions</b>: Define the actions that should be taken when an event meets the conditions defined in the rules</li>
             </ul>
             <p class="admonition-padding">For more information on rulebooks, see the
                 <a href="https://ansible.readthedocs.io/projects/rulebook/en/latest/introduction.html#why-rulebooks" target="_blank">EDA documentation</a>.
@@ -516,7 +516,7 @@
     <h2><span class="text-primary">Summary</span></h2>
     <p>By this point, you can likely envision the number of possibilities Ansible offers for event response automation. The power of Ansible lies
     in its versatility and extensive module library, that could allow you to take actions such as:</p>
-    <ul style="text-align: left;">
+    <ul style="text-align: left; list-style-position: inside">
         <li>Send instant notifications via Slack or other messaging platforms</li>
         <li>Automatically open ServiceNow tickets for incident tracking</li>
         <li>Create or modify firewall rules in real-time</li>
@@ -524,7 +524,7 @@
     </ul>
     <p style="margin-top: revert;">These capabilities significantly extend your incident response toolkit beyond the native features of the Falcon platform. Ansible's integration potential
     allows you to create sophisticated, multi-step workflows that can:</p>
-    <ul style="text-align: left;">
+    <ul style="text-align: left; list-style-position: inside">
         <li>Orchestrate complex remediation processes</li>
         <li>Automate compliance checks and reporting</li>
         <li>Facilitate seamless interaction between disparate systems</li>

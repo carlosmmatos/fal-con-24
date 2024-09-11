@@ -5,6 +5,23 @@
     .modal-content>div {
         width: unset;
     }
+    .admonition-padding {
+        border-left: .25em solid;
+        padding-left: 20px;
+        font-style: italic;
+    }
+    .bold-red {
+        padding: unset;
+        color: red;
+        font-weight: bold;
+        background-color: unset;
+    }
+    p {
+        line-height: 1.7;
+    }
+    li {
+        line-height: 1.3;
+    }
 </style>
 <section id="step-summary" class="step step--intro">
     <div class="step__number step__number--intro">
@@ -13,7 +30,7 @@
     <h1>Combatting Shadow IT with Dynamic Inventories</h1>
     <p>In this lab, you will learn how to utilize the Falcon Discover API via the CrowdStrike <b style="padding: unset;">falcon_discover</b> Ansible dynamic inventory
         to tackle Shadow IT challenges. Specifically, you will discover how to:</p>
-    <ul style="text-align: left;">
+    <ul style="text-align: left; list-style-position: inside;">
         <li>Use the Falcon Discover dynamic inventory to identify assets in your environment</li>
         <li>Use FQL filters to target specific assets</li>
         <li>Group assets using Ansible's dynamic inventory</li>
@@ -25,59 +42,42 @@
 
 <section id="step-warmup" class="step">
     <div class="step__number">
-        <span>Vim Basics</span>
+        <span>Editor Primer</span>
     </div>
-    <div class="grid grid-bleed-y">
+    <div>
+        <h3>Micro Terminal Editor: A Quick Primer</h3>
+        <p class="admonition-padding">Feel free to use your preferred text editor of choice (nano/vim/etc). Most of the images/gifs are using VIM.</p>
+        <p>Since this lab has some terminal buffer limitations due to the nature of Cloudshare, plus understanding that not everyone is a terminal junky when editing
+            files, it was important to find a bridge. That's where the <b>micro</b> terminal-based text editor comes in!</p>
+        <p>The beauty of this litte gem is that you can actually use your mouse!</p>
+        <p>Here are some essential commands to get you started:</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: 15px;">
         <div class="col-6">
-            <h3>Vim Basics: A Quick Primer</h3>
-            <p>Since we will be using VIM, VIM is a powerful text editor that can be intimidating at first. Here are some essential commands to get you started:</p>
-
             <h3>Opening and Closing Files</h3>
             <ul>
-                <li><code>vim filename</code> - Open a file in VIM</li>
-                <li><code>:q</code> - Quit (close) VIM</li>
-                <li><code>:q!</code> - Quit without saving changes</li>
-                <li><code>:x</code> - Save and quit</li>
-            </ul>
-
-            <h3>Modes</h3>
-            <p>VIM has two main modes:</p>
-            <ul>
-                <li><strong>Normal Mode:</strong> For navigation and commands (default mode)</li>
-                <li><strong>Insert Mode:</strong> For typing and editing text</li>
-            </ul>
-
-            <h3>Basic Editing</h3>
-            <ul>
-                <li><code>i</code> - Enter Insert mode before the cursor</li>
-                <li><code>a</code> - Enter Insert mode after the cursor</li>
-                <li><code>Esc</code> - Return to Normal mode</li>
-                <li><code>x</code> - Delete character under the cursor</li>
-                <li><code>dd</code> - Delete entire line</li>
-                <li><code>u</code> - Undo last action</li>
-            </ul>
-        </div>
-        <div class="col-6">
-            <h3>Navigation</h3>
-            <ul>
-                <li><code>h</code> - Move left</li>
-                <li><code>j</code> - Move down</li>
-                <li><code>k</code> - Move up</li>
-                <li><code>l</code> - Move right</li>
-                <li><code>0</code> - Move to beginning of line</li>
-                <li><code>$</code> - Move to end of line</li>
+                <li><code>micro filename</code> - Open a file</li>
+                <li><code>Ctrl-q</code> - Quit (close)</li>
             </ul>
 
             <h3>Saving Changes</h3>
             <ul>
-                <li><code>:w</code> - Save changes</li>
-                <li><code>:w filename</code> - Save as a new file</li>
+                <li><code>Ctrl-s</code> - Save</li>
             </ul>
-
-            <p>Remember, to execute commands in VIM, you need to be in Normal mode. Press <code>Esc</code> to ensure you're in Normal mode, then type the command followed by Enter.</p>
-            <p>Finally, your lab is configured with a VIM plugin to make it easier to toggle comments if you choose to use it. To toggle comments, select the line
-                you want to toggle in Normal Mode, then press <code>gcc</code></p>
         </div>
+        <div class="col-6">
+            <h3>Basic Editing</h3>
+            <p>Editing within <b>micro</b> should feel like most text editors. But here are a few useful commands:</p>
+            <ul>
+                <li><code>Ctrl-z</code> - Undo</li>
+                <li><code>Ctrl-y</code> - Redo</li>
+                <li><code>Ctrl/CMD-/</code> - Toggle Comments</li>
+            </ul>
+        </div>
+    </div>
+    <div sytle="margin-top: inherit;">
+        <p class="admonition-padding">(For VIM users only): Your lab is configured with a VIM plugin to make it easier to toggle comments if you choose to use it. To toggle comments, select the line
+            you want to toggle in Normal Mode, then press <code>gcc</code></p>
     </div>
 </section>
 
@@ -118,7 +118,7 @@
             <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s2.png" width="100%" alt="">
         </div>
         <div class="col-6">
-            <h3>Review the Inventory File</h3>
+            <h3>Review Inventory File</h3>
             <p>Let's start off by going over the dynamic inventory file.</p>
             <p style="
                 border-left: .25em solid;
@@ -204,7 +204,7 @@
             <h3>Filter Assets: View all AWS assets in your environment</h3>
             <p>Now that we know how to view our inventory hosts, let's start to play with filter. In this example, we
                 are going to return only AWS assets.</p>
-            <p>Open the <b>demo.falcon_discover.yml</b> file with VIM and uncomment the following line in the :</p>
+            <p>Open the <b>demo.falcon_discover.yml</b> file and uncomment the following line in the :</p>
             <code># filter: "cloud_provider:'AWS'"</code>
             <br>
             <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the filtered assets:</p>
@@ -244,7 +244,7 @@
         <div class="col-6">
             <h3>Filter Assets: View all the 'ansible' lab VMs</h3>
             <p>The previous filter showed us all AWS assets, let's take a look at all the 'ansible' lab vm's in the environment.</p>
-            <p>Open the <b>demo.falcon_discover.yml</b> file with VIM and <mark>recomment the previous line</mark>. Then uncomment the following line in the :</p>
+            <p>Open the <b>demo.falcon_discover.yml</b> file and <mark>recomment the previous line</mark>. Then uncomment the following line in the :</p>
             <code># filter: hostname:*'*-ansible'</code>
             <br>
             <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the filtered assets:</p>
@@ -286,8 +286,7 @@
 
             <p>Under the <b>keyed_groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
 
-            <code># - prefix: cloud
-#   key: cloud_provider</code>
+            <code># - prefix: cloud<br>#   key: cloud_provider</code>
 
             <br>
             <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the grouped assets:</p>
@@ -323,12 +322,11 @@
 
             <p>Under the <b>groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
 
-            <code># unmanaged_assets: "entity_type == 'unmanaged'"
-# managed_assets: "entity_type == 'managed'"</code>
+            <code># unmanaged_assets: "entity_type == 'unmanaged'"<br># managed_assets: "entity_type == 'managed'"</code>
 
             <br>
             <p>This creates 2 groups that contains all the unmanaged and managed assets in our environment.
-            Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the grouped assets:</p>
+                Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the grouped assets:</p>
             <div class="grid copy-parent">
                 <div class="col-auto">
                     <div class="input-group">
@@ -358,10 +356,10 @@
         <div class="col-6">
             <h3>Modify Host Variables</h3>
             <p>The compose section of the <b>demo.falcon_discover.yml</b> file allows us to modify the host variables.
-            In this section, we can add or modify variables for each host using Jinja2 templating.</p>
+                In this section, we can add or modify variables for each host using Jinja2 templating.</p>
 
-            <p>Before we modify the host variables, let's first view the host variables for a specific host.
-            Run the <b>demo.falcon_discover.yml</b> command to view the host variables for a specific host</p>
+            <p>Before we modify the host variables, let's first view the host variables for a specific host.</p>
+            <p>Run the <b>demo.falcon_discover.yml</b> command to view the host variables for a specific host</p>
             <div class="grid copy-parent">
                 <div class="col-auto">
                     <div class="input-group">
@@ -377,8 +375,7 @@
                 </div>
             </div>
             <p style="margin-top: revert;">Under the <b>compose</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
-            <code># ansible_host: local_ip_addresses[0]
-# ansible_user: ec2-user</code>
+            <code># ansible_host: local_ip_addresses[0]<br># ansible_user: ec2-user</code>
             <br>
             <p>Run the following command to view the modified host variables being applied:</p>
             <div class="grid copy-parent">
@@ -408,7 +405,7 @@
         <div class="col-6" style="width: unset;">
             <h3>Narroring the Scope</h3>
             <p>Now that we have seen how to filter, group, and modify host variables, let's use Ansible to deploy the Falcon sensor against unmanaged assets. Specifically, for this lab we
-            will want to ensure that you are targeting the correct assets before proceeding.</p>
+                will want to ensure that you are targeting the correct assets before proceeding.</p>
 
             <p style="
                 border-left: .25em solid;
@@ -418,11 +415,11 @@
                 that each host has a unique hostname. The following steps will show you how to accomplish this.</p>
 
             <p>In this lab, we all have a unique alias assigned to our lab VMs. For example, on your <b>ansible</b> VM you will see the hostname as <b>your-alias-ansible</b>.</p>
-            <p>Since the Falcon Discover API can't read OS level information about the unmanaged assets, it instead is using the aws hostname as the hostname for the unmanaged assets.
-            This means that everyone in the lab will have the same unmanaged assets in their environment that look like the following:</p>
+            <p>Since the Falcon Discover API can't read OS level information about the unmanaged assets, it instead is using the AWS hostname as the hostname for the unmanaged assets.
+                This means that everyone in the lab will have the same unmanaged assets in their environment that look like the following:</p>
             <ul>
-                <li><b style="padding: unset;">ip-172-17-0-20.us-west-2.compute.internal</b> (aka sketchy-cat1)</li>
-                <li><b style="padding: unset;">ip-172-17-0-30.us-west-2.compute.internal</b> (aka sketych-cat2)</li>
+                <li><b>ip-172-17-0-20.us-west-2.compute.internal</b> (aka <b class="bold-red">sketchy-cat1</b>)</li>
+                <li><b>ip-172-17-0-30.us-west-2.compute.internal</b> (aka <b class="bold-red">sketchy-cat2</b>)</li>
             </ul>
 
             <p>So how do we target the correct assets? Move on to the next step to find out!</p>
@@ -450,8 +447,8 @@
 
             <br>
             <p>What this does is that if the hostnames already exist in the inventory, it will append a unique identifier
-            (the <strong style="color: red; font-style: italic; font-weight: bold; ">Asset ID</strong>) to the hostname to make it unique. Save the
-            file and run the <b style="padding: unset;">ansible-inventory</b> command to view the assets with the unique identifiers.</p>
+                (the <strong style="color: red; font-style: italic; font-weight: bold; ">Asset ID</strong>) to the hostname to make it unique. Save the
+                file and run the <b style="padding: unset;">ansible-inventory</b> command to view the assets with the unique identifiers.</p>
             <div class="grid copy-parent">
                 <div class="col-auto">
                     <div class="input-group">
@@ -482,8 +479,7 @@
             <p>We can also use another unique identifier to deal with duplicates. In our case, we will use the <b>cloud_account_id</b> since everyone has a unique AWS account ID in the lab.</p>
 
             <p><mark>Recomment the previous change</mark> and then under the <b>keyed_groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
-            <code># - prefix: sketchy
-#   key: cloud_account_id</code>
+            <code># - prefix: sketchy<br>#   key: cloud_account_id</code>
             <br>
             <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the new grouped assets.</p>
             <div class="grid copy-parent">
@@ -564,7 +560,7 @@
                 </div>
             </div>
             <p style="margin-top: revert;">Either one can be used to filter down. However, for this lab we will use the first filter as we want to be able to see all the assets in our
-            AWS account and use the groups we created earlier to target the unmanaged assets. Go ahead and copy that.</p>
+                AWS account and use the groups we created earlier to target the unmanaged assets. Go ahead and copy that.</p>
             <p>Open the <b>demo.falcon_discover.yml</b> file and paste your copied filter right after the first line</p>
             <p>Save the file and run <b>ansible-inventory</b> with the <b>unmanaged_assets</b> group to view the filtered assets</p>
             <div class="grid copy-parent">
@@ -628,7 +624,7 @@
         <div class="col-6">
             <h3>Deploy Falcon!</h3>
             <p>Now that we have narrowed down our scope and know we can communicate with our targets, let's see how to leverage the CrowdStrike Falcon Ansible collection to
-            protect our environment against unmanaged assets.</p>
+                protect our environment against unmanaged assets.</p>
 
             <p>Let's take a peek at the Ansible playbook that will deploy the Falcon sensor against our targets:</p>
             <div class="grid copy-parent">
@@ -676,7 +672,7 @@
         <div class="col-6">
             <h3>Validate</h3>
             <p>Sweet! You've just deployed the Falcon sensor to the unmanaged assets in your environment. You can now view the assets in the Falcon UI or we can use the
-            dynamic inventory to check for the assets with the Falcon sensor installed (aka managed assets).</p>
+                dynamic inventory to check for the assets with the Falcon sensor installed (aka managed assets).</p>
 
             <p>Run the following command to view the <b>managed</b> assets group:</p>
             <div class="grid copy-parent">
@@ -715,7 +711,7 @@
             <h3>Bonus</h3>
             <p>I'd be remissed if I didn't show you another way to query your managed assets using a CrowdStrike Falcon Ansible module</p>
 
-            <p>Run the following command using the `crowdstrike.falcon.falconctl_info` module to view the sensor information for the sketchy-cat assets:</p>
+            <p>Run the following command using the <b>crowdstrike.falcon.falconctl_info</b> module to view the sensor information for the sketchy-cat assets:</p>
             <div class="grid copy-parent">
                 <div class="col-auto">
                     <div class="input-group">
@@ -743,7 +739,7 @@
 <section id="step-complete" class="step step--complete">
     <h2><span class="text-primary">Summary</span></h2>
     <p>In this scenario, we learned how to:</p>
-    <ul style="text-align: left;">
+    <ul style="text-align: left; list-style-position: inside;">
         <li>Use the Falcon Discover dynamic inventory to identify assets in your environment</li>
         <li>Use FQL filters to target specific assets</li>
         <li>Group assets using Ansible's dynamic inventory</li>
