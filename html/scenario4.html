@@ -1,0 +1,940 @@
+<style>
+    .admonition-padding {
+        border-left: .25em solid;
+        padding-left: 20px;
+        font-style: italic;
+    }
+    .input-group__control {
+        font-family: "Courier New", Courier, monospace;
+    }
+    .bold-red {
+        padding: unset;
+        color: red;
+        font-weight: bold;
+        background-color: unset;
+    }
+    .modal-content>div {
+        width: unset;
+    }
+    p {
+        line-height: 1.7;
+    }
+    li {
+        line-height: 1.3;
+    }
+</style>
+<section id="step-summary" class="step step--intro">
+    <div class="step__number step__number--intro">
+        <span>Overview</span>
+    </div>
+    <h1>Modules, Plugins, and More</h1>
+    <p>In this lab, you will learn how to leverage the CrowdStrike Falcon collection modules and plugins for Ansible within your environment, moving outside of traditional sensor deployment.</p>
+    <p>By the end of this lab, you will be able to:</p>
+    <ul style="text-align: left;">
+        <li>Understand where to find the documentation for the CrowdStrike Falcon modules and plugins</li>
+        <li>Understand the different CrowdStrike Falcon modules and plugins for Ansible</li>
+        <li>Use the CrowdStrike Falcon modules and plugins to automate tasks</li>
+    </ul>
+    <p>Lab location: <b>~/labs/lab4</b></p>
+</section>
+
+<section id="step-01" class="step">
+    <div class="step__number">
+        <span>Step / 01</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s1-1.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Change directory to the <b>lab4</b> directory</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cd ~/labs/lab4</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-structure" class="step">
+    <div class="step__number">
+        <span>Lab Structure</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6" style="width: unset;">
+            <img style="width: 400px;" class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4soverview.png" alt="">
+            <p style="margin-top: revert;">The lab directory is broken out into the following sections:</p>
+            <ul>
+                <li><b class="bold-red">modules</b>: Contains example playbooks demonstrating the use of the CrowdStrike Falcon modules</li>
+                <li><b class="bold-red">plugins</b>: Contains example playbooks demonstrating the use of the CrowdStrike Falcon plugins</li>
+                <li><b class="bold-red">examples</b>: Contains example playbooks demonstrating ways to take advantage of the CrowdStrike Falcon modules and plugins</li>
+            </ul>
+            <p>The <b>inventory</b> file contains a static inventory for the lab environment that consists of:</p>
+            <ul>
+                <li><b class="bold-red">localhost</b>: The local machine running the Ansible playbook</li>
+                <li><b class="bold-red">sketchy_cats</b>: A group that contains your two sketchy-cat hosts</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="step-docs-ui" class="step">
+    <div class="step__number">
+        <span>Documentation UI</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6" style="width: unset;">
+            <p>Before we dive into the modules and plugins, let's take a look at the documentation for the CrowdStrike Falcon modules, plugins, and other resources.</p>
+            <h3>GitHub</h3>
+            <p>The CrowdStrike Falcon Ansible collection is available on GitHub at
+                <a href="https://github.com/CrowdStrike/ansible_collection_falcon" target="_blank">https://github.com/CrowdStrike/ansible_collection_falcon</a>
+            </p>
+            <p>This is the primary source of truth for the CrowdStrike Falcon Ansible collection. You can find the latest documentation, release notes, and other resources here.</p>
+
+            <h3>Ansible Galaxy</h3>
+            <p>The CrowdStrike Falcon Ansible collection is also available on Ansible Galaxy at
+                <a href="https://galaxy.ansible.com/ui/repo/published/crowdstrike/falcon" target="_blank">https://galaxy.ansible.com/ui/repo/published/crowdstrike/falcon</a>
+            </p>
+
+            <h3>Red Hat Ansible Automation Hub</h3>
+            <p>As a certified Ansible collection, the CrowdStrike Falcon Ansible collection is also available on Automation Hub at
+                <a href="https://console.redhat.com/ansible/automation-hub/repo/published/crowdstrike/falcon/" target="_blank">https://console.redhat.com/ansible/automation-hub/repo/published/crowdstrike/falcon/</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="step-docs-cli" class="step">
+    <div class="step__number">
+        <span>Documentation CLI</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4scli.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>You can also use the <b>ansible-doc</b> command to view the documentation for the CrowdStrike Falcon modules and plugins.</p>
+            <p>To list all the available modules and lookup plugins in the collection by type, use the following commands:</p>
+            <code>ansible-doc -l crowdstrike.falcon -t module<br>ansible-doc -l crowdstrike.falcon -t lookup</code>
+            <p class="admonition-padding" style="margin-top: revert;">:( Unfortunately there is no way to list ALL the plugins in the collection at once. You will need to list them by type.</p>
+            <p>To see the documentation for the <b>crowdstrike.falcon.sensor_download</b> module:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-doc crowdstrike.falcon.sensor_download</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">For more information on the <b>ansible-doc</b> command, see the
+                <a href="https://docs.ansible.com/ansible/latest/cli/ansible-doc.html" target="_blank">Ansible documentation</a>.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="step-modules" class="step">
+    <div class="step__number">
+        <span>Modules</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6" style="width: unset;">
+            <p class="admonition-padding">The following examples are just to demonstrate a subset of the CrowdStrike Falcon modules available in the collection.
+                For a complete list of modules, see any of the documentation sources mentioned above.</p>
+            <p>An Ansible module is essentially a standalone script that Ansible runs on a host. Each module is designed to accomplish a specific task, such as installing a package or restarting a service.</p>
+            <p>In this section, for each module shown, you will review an example playbook and then execute the playbook to see the module in action.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-auth" class="step">
+    <div class="step__number">
+        <span>Modules / Auth</span>
+    </div>
+    <div>
+        <p>Module: <b>crowdstrike.falcon.auth</b></p>
+        <p>Manage token authentication for the CrowdStrike Falcon API.</p>
+        <p class="admonition-padding">This module is particularly useful if you plan on making multiple API calls within a play. It is not mandatory to use with any of the other modules as all modules
+            and plugins support both direct auth (credentials) and the auth object generated by this module.</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s1.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Review the <b>modules/auth.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat modules/auth.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we are going to be generating an auth object (which consists of an access_token and your api cloud region). We are then writing that object
+                to a temporary file so that we can leverage it in future example playbooks.</p>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s2.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Execute the <b>modules/auth.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook modules/auth.yml -v</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Review the temporary file created by the auth.yml module playbook.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat /tmp/falcon_token.json | jq .</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p class="admonition-padding" style="margin-top: revert;">Please note that access tokens are only valid for 30 minutes!</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-ksi" class="step">
+    <div class="step__number">
+        <span>Modules / Kernel Support Info</span>
+    </div>
+    <div>
+        <p>Module: <b>crowdstrike.falcon.kernel_support_info</b></p>
+        <p>Get information about kernels supported by the Falcon Sensor for Linux. This module is useful for determining if the Falcon Sensor is
+            compatible with the kernel version.</p>
+        <p class="admonition-padding">This does not reflect or is relevant for systems running in User Mode.</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s3.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Example 1</h3>
+
+            <p>Review the <b>modules/kernel_support_info1.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat modules/kernel_support_info1.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p class="admonition-padding" style="margin-top: revert;">Notice how we use the <b class="bold-red">auth</b> object from the previous playbook.</p>
+            <p>In this example, we will target <b>sketchy-cat2</b> and set the kernel and architecture from the gathered facts. Next, we will pass that
+                information to the <b>kernel_support_info</b> module to see what sensor versions are supported for sketchy.</p>
+            <p>Finally we list all the support information for Ubuntu 20 kernels that start with 5.8</p>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s4.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Example 1</h3>
+            <p>Execute the <b>modules/kernel_support_info1.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook modules/kernel_support_info1.yml -v | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Review the <b>output.txt</b> file to view the entire run.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Notice the base sensor versions available for <b>sketchy-cat2</b>.</p>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s5.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Example 2</h3>
+            <p>This example shows how to leverage Ansible's powerful Jinja2 templating to further refine results. Let's face it, sometimes FQL (falcon query language)
+                can be confusing/frustrating. But if you just ask for everything and then refine with Ansible, the world is a better place ;)</p>
+            <p>Review the <b>modules/kernel_support_info1.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat modules/kernel_support_info1.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we ask the API to give us all the x86_64 kernels supported for Amazon Linux OS'. Then we use Jinja2 filters such
+                as <b class="bold-red">selectattr</b> and <b class="bold-red">sort</b> to refine our results.</p>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s6.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Example 2</h3>
+            <p>Execute the <b>modules/kernel_support_info1.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook modules/kernel_support_info2.yml | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Review the <b>output.txt</b> file to view the entire run.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p class="admonition-padding" style="margin-top: revert;">For more information on Jinja2 filters, see the
+                <a href="https://jinja.palletsprojects.com/en/3.1.x/templates/#builtin-filters" target="_blank">Jinja2 docs</a>.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section id="step-sdi" class="step">
+    <div class="step__number">
+        <span>Modules / Sensor Download Info</span>
+    </div>
+    <div>
+        <p>Module: <b>crowdstrike.falcon.sensor_download_info</b></p>
+        <p>Get information about available Falcon Sensor Installers. Typically used as an input for the <b>crowdstrike.falcon.sensor_download</b> module we will visit next.</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s7.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Review the <b>modules/sensor_download_info.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat modules/sensor_download_info.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we are getting all the available Windows sensor installers, and then printing out the 2 most recent installers.</p>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s8.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Execute the <b>modules/sensor_download_info.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook modules/sensor_download_info.yml | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Review the <b>output.txt</b> file to view the entire run.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p class="admonition-padding" style="margin-top: revert;">Make a mental note of the <b>sha256</b> field.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-sd" class="step">
+    <div class="step__number">
+        <span>Modules / Sensor Download</span>
+    </div>
+    <div>
+        <p>Module: <b>crowdstrike.falcon.sensor_download</b></p>
+        <p>Downloads the Falcon Sensor Installer.</p>
+        <p class="admonition-padding">This module downloads the Falcon Sensor installers to the <b class="bold-red">local</b> machine only.</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s9.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Review the <b>modules/sensor_download.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat modules/sensor_download.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we are doing the following:</p>
+            <ol>
+                <li>Setup a version decrement variable: <b class="bold-red">n_minus</b> to mimic downloading N-1 sensor.</li>
+                <li>Build out our filter based on <b style="padding: unset;">sketchy-cat1</b></li>
+                <li>Use the <b style="padding: unset;">sensor_download_info</b> module to get our list of installers</li>
+                <li>Validate our list and then download the <b class="bold-red">n_minus</b> version to the /tmp directory</li>
+            </ol>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s10.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Execute the <b>modules/sensor_download.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook modules/sensor_download.yml -v | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Review the <b>output.txt</b> file to view the entire run.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Awesome! You have succesfully downloaded a sensor installer!</p>
+            <p>Now go ahead and run the Ansible playbook again and see if anything changes. It shouldn't since Ansible is all about idempotency (<i style="font-style: italic;">things dont need to change if they're already in
+                    the right state</i>) and the CrowdStrike Falcon Ansible modules follow this principle.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-plugins" class="step">
+    <div class="step__number">
+        <span>Plugins</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6" style="width: unset;">
+            <p class="admonition-padding">There is a distinction between modules and plugins in Ansible. Modules are standalone scripts that can be used by Ansible to automate tasks. Plugins are pieces of code that extend Ansible's core functionality. Plugins can be lookups, filters, callbacks, inventories, etc.</p>
+            <p>In this section, for each plugin shown, you will review an example playbook and then execute the playbook to see the plugin in action.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-host-ids" class="step">
+    <div class="step__number">
+        <span>Plugins / Host IDs</span>
+    </div>
+    <div>
+        <h3>Lookup Filter</h3>
+        <p>Plugin: <b>crowdstrike.falcon.host_ids</b></p>
+        <p>Fetch host IDs based on a filter.</p>
+        <p class="admonition-padding">This plugin is extremely useful as input to the other host modules.</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s11.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Review the <b>plugins/host_ids.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat plugins/host_ids.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we are doing the following:</p>
+            <ol>
+                <li>Using the lookup filter to print out all the host IDs found in our CID</li>
+                <li>Using the lookup filter as input for the <b style="padding: unset;">crowdstrike.falcon.host_info</b> module to get information on hosts that haven't been seen in over 10 days.</li>
+                <li>Print out the results of the previous task</li>
+            </ol>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s12.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Execute the <b>plugins/host_ids.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook plugins/host_ids.yml | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Review the <b>output.txt</b> file to view the entire run.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-maint-token" class="step">
+    <div class="step__number">
+        <span>Plugins / Maintenance Token</span>
+    </div>
+    <div>
+        <h3>Lookup Filter</h3>
+        <p>Plugin: <b>crowdstrike.falcon.maintenance_token</b></p>
+        <p>Fetch a maintenance token. This plugin will fetch the maintenance token for specified hosts, or it can also retrieve the bulk maintenance
+        token (<text style="font-style: italic;">if applicable in your environment</text>).</p>
+        <p class="admonition-padding">Maintenance tokens are used to uninstall the Falcon Sensor from a host.</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s13.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Review the <b>plugins/maintenance_token.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat plugins/maintenance_token.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we are going to print out the maintenance tokens associated with the stale hosts from the last plugin example</p>
+            <p class="admonition-padding">You can use the <b>crowdstrike.falcon.host_ids</b> lookup plugin to get the host IDs for the hosts you want to retrieve the maintenance token for.</p>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s14.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Execute the <b>plugins/maintenance_token.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook plugins/maintenance_token.yml | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Review the <b>output.txt</b> file to view the entire run.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-host-inv" class="step">
+    <div class="step__number">
+        <span>Plugins / Falcon Hosts</span>
+    </div>
+    <div>
+        <h3>Dynamic Inventory</h3>
+        <p>Plugin: <b>crowdstrike.falcon.falcon_hosts</b></p>
+        <p>This dynamic inventory queries asset details from the CrowdStrike Falcon Hosts API.</p>
+        <p class="admonition-padding">The difference between this inventory plugin and the <b>crowdstrike.falcon.falcon_discover</b> inventory
+        plugin is that this plugin will only work with <b class="bold-red">managed</b> assets that already have the sensor installed.</p>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s13.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Review the <b>plugins/demo.falcon_hosts.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">vim plugins/demo.falcon_hosts.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this inventory example, we are:</p>
+            <ol>
+                <li>Setup a version decrement variable: <b class="bold-red">n_minus</b> to mimic downloading N-1 sensor.</li>
+                <li>Build out our filter based on <b style="padding: unset;">sketchy-cat1</b></li>
+                <li>Use the <b style="padding: unset;">sensor_download_info</b> module to get our list of installers</li>
+                <li>Validate our list and then download the <b class="bold-red">n_minus</b> version to the /tmp directory</li>
+            </ol>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4s16.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Run the <b>ansible-inventory</b> command to view your Falcon Hosts assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i plugins/demo.falcon_hosts.yml --list -l sketchy | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p class="admonition-padding" style="margin-top: revert;">Notice the details you get from this dynamic inventory vs the Discover inventory.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-example-1" class="step">
+    <div class="step__number">
+        <span>Example</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6" style="width: unset;">
+            <h3>Example: Hiding hosts from the Falcon console</h3>
+            <p>A very common use case is to hide hosts from the Falcon console, especially hosts that are generally considered ephemeral or stale because they have not checked in for a long time.</p>
+            <p class="admonition-padding">If you manage hosts with our Ansible collection, you can leverage the
+            <a href="https://github.com/CrowdStrike/ansible_collection_falcon/blob/main/roles/falcon_uninstall/README.md" target="blank">crowdstrike.falcon.falcon_uninstall</a> role to automatically
+            hide hosts after uninstalling the sensor by setting the <b>falcon_remove_host: true</b>.</p>
+            <p>This example will show two different ways you can accomplish this:</p>
+            <ul>
+                <li>Using a lookup plugin</li>
+                <li>Using a dynamic inventory</li>
+            </ul>
+            <p style="margin-top: revert;">Before proceeding, let's view your hosts in the console:</p>
+            <div>
+                <a class="btn btn-lg btn-danger round-both mb-1 cloud_account_id" rel="noopener2 noreferrer2" target="crowdstrike" data-template="https://falcon.crowdstrike.com/host-management/hosts?filter=tags%3A%27SensorGroupingTags%2F{{alias}}%27" href="#">Open Host Management</a>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4example1-1.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Using Lookup Plugin</h3>
+            <p>Review the <b>examples/host-hide-lookup.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat examples/host-hide-lookup.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we are:</p>
+            <ol>
+                <li>Creating a list of aids from our <b style="padding: unset;">host_ids</b> lookup plugin based on a filter targetting our sketchy cats</li>
+                <li>Running the <b style="padding: unset;">host_hide</b> module to hide our hosts from the Falcon console</li>
+                <li>Pausing until the <b style="padding: unset;">Enter</b> key is pressed</li>
+                <li>Running the <b style="padding: unset;">host_hide</b> module to UNhide our hosts from the Falcon console</li>
+            </ol>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4example1-1.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Execute the <b>examples/host-hide-lookup.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">\ansible-playbook examples/host-hide-lookup.yml -v | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p class="admonition-padding" style="margin-top: revert;">If you noticed that we are using a leading backslash (\) before the ansible-playbook command, this is to prevent the helper alias we have for ansible-playbook from running. This is because the <b>unbuffer</b> command does not play nicely with the ansible.builtin.pause module. The <b>unbuffer</b> command is useful for this lab to get colorized output from the ansible-playbook command and view it in the tee output file.</p>
+            <p>Once you get to the Paused portion, do the following:</p>
+            <ol>
+                <li>Navigate back to the Falcon console and refresh the page.</li>
+                <li>Selecte the Hidden hosts tab</li>
+                <li>Apply a filter by Tags using your alias. Validate that your kittens are now hidden.</li>
+                <li>Go back to the <b style="padding: unset;">ansible</b> vm and continue running the playbook by pressing <b style="padding: unset;">Enter</b></li>
+                <li>When the playbook finishes, refresh the Falcon console page again and see if the hosts are now back in the Hosts tab</li>
+            </ol>
+            <p>Congrats! You've just used the lookup plugin to hide a group of hosts! Next we'll see how we can accomplish the same using our dynamic inventory.</p>
+        </div>
+    </div>
+    <hr style="margin-top: revert;">
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4example1-2.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Using a Dynamic Inventory</h3>
+            <p>In this example, we will use the <b>crowdstrike.falcon.falcon_hosts</b> inventory plugin to generate a dynamic inventory of hosts and hide them from the Falcon console. We will take advantage of the <b class="bold-red">inventory caching</b> features to ensure that we don't lose our aid's.</p>
+            <p class="admonition-padding"><b class="bold-red">Important:</b> When a host is hidden, is it also hidden from the context of our dynamic inventories. This means that if you hide a host, it will not show up in the inventory generated by the Falcon Hosts or Falcon Discover inventory plugins.</p>
+            <p>We don't need to review the inventory file as it's the same one from the plugin example above.</p>
+            <p>Review the <b>examples/host-hide-inventory.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat examples/host-hide-inventory.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">In this example, we are:</p>
+            <ol>
+                <li>Creating a list of aids from our dynamic inventory <b>sketchy</b> group targetting our sketchy cats</li>
+                <li>Running the <b style="padding: unset;">host_hide</b> module to hide our hosts from the Falcon console</li>
+            </ol>
+            <p class="admonition-padding">This version shows how to loop through the AIDs and hide them one by one. This can be slow if you have a large number of hosts to hide. If you do choose to go this route, this is where generating and using the <b>crowdstrike.falcon.auth</b> token can be useful to prevent repeated API authentication calls.</p>
+        </div>
+    </div>
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s4example1-2.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Execute the <b>examples/host-hide-inventory.yml</b> playbook:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook -i plugins/demo.falcon_hosts.yml examples/host-hide-inventory.yml -v | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">You can follow the console steps again if want, except this time, to bring the host back, we are going to take
+            advantage of caching!</p>
+            <p>There is a playbook that just reverses the state of <b>hidden</b> from true to false: <b>examples/host-unhide-inventory.yml</b></p>
+            <p>Execute the <b>examples/host-unhide-inventory.yml</b> playbook to unhide the hosts:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook -i plugins/demo.falcon_hosts.yml examples/host-unhide-inventory.yml -v | tee output.txt</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Sweet job! Now while our hosts are in their correct state..go ahead and run the command again and see how nothing changes!</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-complete" class="step step--complete">
+    <h2><span class="text-primary">Summary</span></h2>
+    <p>In this scenario, we learned how to:</p>
+    <ul style="text-align: left;">
+        <li>Understand where to find the documentation for the CrowdStrike Falcon modules and plugins</li>
+        <li>Understand different CrowdStrike Falcon modules and plugins for Ansible</li>
+        <li>Use the CrowdStrike Falcon modules and plugins to automate tasks</li>
+    </ul>
+
+    <a href="#" class="btn btn--alt nav_button forward">
+        <img src="/dist/img/carousel-next.svg" width="20">
+    </a>
+    <p class="small uppercase">Next Scenario</p>
+</section>

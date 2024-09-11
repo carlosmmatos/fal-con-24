@@ -1,0 +1,758 @@
+<style>
+    .input-group__control {
+        font-family: "Courier New", Courier, monospace;
+    }
+    .modal-content>div {
+        width: unset;
+    }
+</style>
+<section id="step-summary" class="step step--intro">
+    <div class="step__number step__number--intro">
+        <span>Overview</span>
+    </div>
+    <h1>Combatting Shadow IT with Dynamic Inventories</h1>
+    <p>In this lab, you will learn how to utilize the Falcon Discover API via the CrowdStrike <b style="padding: unset;">falcon_discover</b> Ansible dynamic inventory
+        to tackle Shadow IT challenges. Specifically, you will discover how to:</p>
+    <ul style="text-align: left;">
+        <li>Use the Falcon Discover dynamic inventory to identify assets in your environment</li>
+        <li>Use FQL filters to target specific assets</li>
+        <li>Group assets using Ansible's dynamic inventory</li>
+        <li>Modify host variables in Ansible's dynamic inventory</li>
+        <li>Deploy the Falcon sensor against those pesky sketchy-cats (unmanaged assets).</li>
+    </ul>
+    <p>Lab location: <b>~/labs/lab2</b></p>
+</section>
+
+<section id="step-warmup" class="step">
+    <div class="step__number">
+        <span>Vim Basics</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <h3>Vim Basics: A Quick Primer</h3>
+            <p>Since we will be using VIM, VIM is a powerful text editor that can be intimidating at first. Here are some essential commands to get you started:</p>
+
+            <h3>Opening and Closing Files</h3>
+            <ul>
+                <li><code>vim filename</code> - Open a file in VIM</li>
+                <li><code>:q</code> - Quit (close) VIM</li>
+                <li><code>:q!</code> - Quit without saving changes</li>
+                <li><code>:x</code> - Save and quit</li>
+            </ul>
+
+            <h3>Modes</h3>
+            <p>VIM has two main modes:</p>
+            <ul>
+                <li><strong>Normal Mode:</strong> For navigation and commands (default mode)</li>
+                <li><strong>Insert Mode:</strong> For typing and editing text</li>
+            </ul>
+
+            <h3>Basic Editing</h3>
+            <ul>
+                <li><code>i</code> - Enter Insert mode before the cursor</li>
+                <li><code>a</code> - Enter Insert mode after the cursor</li>
+                <li><code>Esc</code> - Return to Normal mode</li>
+                <li><code>x</code> - Delete character under the cursor</li>
+                <li><code>dd</code> - Delete entire line</li>
+                <li><code>u</code> - Undo last action</li>
+            </ul>
+        </div>
+        <div class="col-6">
+            <h3>Navigation</h3>
+            <ul>
+                <li><code>h</code> - Move left</li>
+                <li><code>j</code> - Move down</li>
+                <li><code>k</code> - Move up</li>
+                <li><code>l</code> - Move right</li>
+                <li><code>0</code> - Move to beginning of line</li>
+                <li><code>$</code> - Move to end of line</li>
+            </ul>
+
+            <h3>Saving Changes</h3>
+            <ul>
+                <li><code>:w</code> - Save changes</li>
+                <li><code>:w filename</code> - Save as a new file</li>
+            </ul>
+
+            <p>Remember, to execute commands in VIM, you need to be in Normal mode. Press <code>Esc</code> to ensure you're in Normal mode, then type the command followed by Enter.</p>
+            <p>Finally, your lab is configured with a VIM plugin to make it easier to toggle comments if you choose to use it. To toggle comments, select the line
+                you want to toggle in Normal Mode, then press <code>gcc</code></p>
+        </div>
+    </div>
+</section>
+
+<section id="step-01" class="step">
+    <div class="step__number">
+        <span>Step / 01</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s1.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Change directory to the <b>lab2</b> directory</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cd ~/labs/lab2</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-02" class="step">
+    <div class="step__number">
+        <span>Step / 02</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s2.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Review the Inventory File</h3>
+            <p>Let's start off by going over the dynamic inventory file.</p>
+            <p style="
+                border-left: .25em solid;
+                padding: inherit;
+                font-style: italic;
+                ">If you are not familiar with Ansible dynamic inventories, you can check out
+                the following <a href="https://docs.ansible.com/ansible/latest/inventory_guide/intro_dynamic_inventory.html#dynamic-inventory" target="_blank">Ansible docs</a>.</p>
+            <p>Run the following command:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less demo.falcon_discover.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Press <b>q</b> to exit the buffer</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-03" class="step">
+    <div class="step__number">
+        <span>Step / 03</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s3.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Quick Primer on ansible-inventory</h3>
+            <p>The <b>ansible-inventory</b> command is a nifty utility Ansible provides to help you understand what Ansible sees from an inventory perspective.</p>
+            <p>In our case, we will use it to help us visualize our Falcon Discover dynamic inventory.</p>
+            <p>Run the following command to view a concise view of our inventory hosts:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly id="autoResizeTextarea" class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --graph | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Run the following command to view a detailed representation of our inventory hosts:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-04" class="step">
+    <div class="step__number">
+        <span>Step / 04</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s4.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Filter Assets: View all AWS assets in your environment</h3>
+            <p>Now that we know how to view our inventory hosts, let's start to play with filter. In this example, we
+                are going to return only AWS assets.</p>
+            <p>Open the <b>demo.falcon_discover.yml</b> file with VIM and uncomment the following line in the :</p>
+            <code># filter: "cloud_provider:'AWS'"</code>
+            <br>
+            <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the filtered assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <p style="
+                border-left: .25em solid;
+                padding: inherit;
+                font-style: italic;
+                ">Notice the only assets returned are those with <b>cloud_provider</b> = AWS.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-05" class="step">
+    <div class="step__number">
+        <span>Step / 05</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s5.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Filter Assets: View all the 'ansible' lab VMs</h3>
+            <p>The previous filter showed us all AWS assets, let's take a look at all the 'ansible' lab vm's in the environment.</p>
+            <p>Open the <b>demo.falcon_discover.yml</b> file with VIM and <mark>recomment the previous line</mark>. Then uncomment the following line in the :</p>
+            <code># filter: hostname:*'*-ansible'</code>
+            <br>
+            <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the filtered assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <p><mark>Recomment the previous line</mark> and save the file before moving on to the next step.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-06" class="step">
+    <div class="step__number">
+        <span>Step / 06</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s6.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Grouping Assets: Keyed Groups</h3>
+            <p>Now that we have seen how to filter assets, let's group them to make it easier to target specific assets.</p>
+            <p>Groups in dynamic inventories come in 2 different flavors: <b>keyed_groups</b> and <b>groups</b>.</p>
+            <p><b>keyed_groups</b> are groups that are based on a key in the host's variables, while <b>groups</b> are groups that are based
+                on a conditional. In this lab, we'll explore both.</p>
+
+            <p>Under the <b>keyed_groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
+
+            <code># - prefix: cloud
+#   key: cloud_provider</code>
+
+            <br>
+            <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the grouped assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --graph | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-07" class="step">
+    <div class="step__number">
+        <span>Step / 07</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s7.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Grouping Assets: Conditional Groups</h3>
+            <p><b>groups</b> are created using Jinja2 conditionals. Let's group our assets by their <b>entity_type</b>.</p>
+
+            <p>Under the <b>groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
+
+            <code># unmanaged_assets: "entity_type == 'unmanaged'"
+# managed_assets: "entity_type == 'managed'"</code>
+
+            <br>
+            <p>This creates 2 groups that contains all the unmanaged and managed assets in our environment.
+            Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the grouped assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --graph | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-08" class="step">
+    <div class="step__number">
+        <span>Step / 08</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s8.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Modify Host Variables</h3>
+            <p>The compose section of the <b>demo.falcon_discover.yml</b> file allows us to modify the host variables.
+            In this section, we can add or modify variables for each host using Jinja2 templating.</p>
+
+            <p>Before we modify the host variables, let's first view the host variables for a specific host.
+            Run the <b>demo.falcon_discover.yml</b> command to view the host variables for a specific host</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Under the <b>compose</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
+            <code># ansible_host: local_ip_addresses[0]
+# ansible_user: ec2-user</code>
+            <br>
+            <p>Run the following command to view the modified host variables being applied:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">We successfully told Ansible how to connect to a host (<b>ansible_host</b>) and what user to connect to that host with (<b>ansible_user</b>).</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-zero-in" class="step">
+    <div class="step__number">
+        <span>Zero In</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6" style="width: unset;">
+            <h3>Narroring the Scope</h3>
+            <p>Now that we have seen how to filter, group, and modify host variables, let's use Ansible to deploy the Falcon sensor against unmanaged assets. Specifically, for this lab we
+            will want to ensure that you are targeting the correct assets before proceeding.</p>
+
+            <p style="
+                border-left: .25em solid;
+                padding: inherit;
+                font-style: italic;
+                ">Duplicate hostnames are not allowed in Ansible. If you have duplicate hostnames in your environment, you will need to modify the <b>demo.falcon_discover.yml</b> file to ensure
+                that each host has a unique hostname. The following steps will show you how to accomplish this.</p>
+
+            <p>In this lab, we all have a unique alias assigned to our lab VMs. For example, on your <b>ansible</b> VM you will see the hostname as <b>your-alias-ansible</b>.</p>
+            <p>Since the Falcon Discover API can't read OS level information about the unmanaged assets, it instead is using the aws hostname as the hostname for the unmanaged assets.
+            This means that everyone in the lab will have the same unmanaged assets in their environment that look like the following:</p>
+            <ul>
+                <li><b style="padding: unset;">ip-172-17-0-20.us-west-2.compute.internal</b> (aka sketchy-cat1)</li>
+                <li><b style="padding: unset;">ip-172-17-0-30.us-west-2.compute.internal</b> (aka sketych-cat2)</li>
+            </ul>
+
+            <p>So how do we target the correct assets? Move on to the next step to find out!</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-09" class="step">
+    <div class="step__number">
+        <span>Step / 09</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s9.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Dealing with Duplicates</h3>
+            <p>There are multiple ways to skin a sketchy-cat...</p>
+
+            <p>For dealing with duplicates, the Falcon Discover dynamic inventory has an option: <b>allow_duplicates</b> that will append a unique identifier to an asset. Let's check it out.</p>
+
+            <p>Open the <b>demo.falcon_discover.yml</b> file and uncomment the following line:</p>
+
+            <code># allow_duplicates: true</code>
+
+            <br>
+            <p>What this does is that if the hostnames already exist in the inventory, it will append a unique identifier
+            (the <strong style="color: red; font-style: italic; font-weight: bold; ">Asset ID</strong>) to the hostname to make it unique. Save the
+            file and run the <b style="padding: unset;">ansible-inventory</b> command to view the assets with the unique identifiers.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --graph | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-10" class="step">
+    <div class="step__number">
+        <span>Step / 10</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s10.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>We can also use another unique identifier to deal with duplicates. In our case, we will use the <b>cloud_account_id</b> since everyone has a unique AWS account ID in the lab.</p>
+
+            <p><mark>Recomment the previous change</mark> and then under the <b>keyed_groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
+            <code># - prefix: sketchy
+#   key: cloud_account_id</code>
+            <br>
+            <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the new grouped assets.</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --graph | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Look at all those unique groups! But which one is yours?</p>
+            <p>Let's use one of our helper aliases. Run the following command to view your AWS account information:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">awsinfo</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Now you have your AWS account ID, copy it and run the following command to view your assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --graph sketchy_YOUR-AWS-ACCOUNT-ID</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Make sure to replace <b>YOUR-AWS-ACCOUNT-ID</b> with your copied aws account ID from the previous command!</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-11" class="step">
+    <div class="step__number">
+        <span>Step / 11</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s11.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Final Filter</h3>
+            <p>Now that we have a real good understanding for how the Falcon Discover dynamic inventory works, let's start putting the final touches together</p>
+
+            <p>Run the following command to view the filters you can use to help target sketchy-cats (unmanaged assets) in your AWS account:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">discover-filters</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="margin-top: revert;">Either one can be used to filter down. However, for this lab we will use the first filter as we want to be able to see all the assets in our
+            AWS account and use the groups we created earlier to target the unmanaged assets. Go ahead and copy that.</p>
+            <p>Open the <b>demo.falcon_discover.yml</b> file and paste your copied filter right after the first line</p>
+            <p>Save the file and run <b>ansible-inventory</b> with the <b>unmanaged_assets</b> group to view the filtered assets</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l unmanaged_assets</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-12" class="step">
+    <div class="step__number">
+        <span>Step / 12</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s12.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Sanity Ping</h3>
+            <p>Now that we have confirmed that we are targeting the correct assets, let's make sure we can connect to the unmanaged assets.</p>
+
+            <p>Run the following command to test the connection to the unmanaged assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible -i demo.falcon_discover.yml unmanaged_assets -m ping</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-13" class="step">
+    <div class="step__number">
+        <span>Step / 13</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s13.png" width="100%" alt="">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s13-2.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Deploy Falcon!</h3>
+            <p>Now that we have narrowed down our scope and know we can communicate with our targets, let's see how to leverage the CrowdStrike Falcon Ansible collection to
+            protect our environment against unmanaged assets.</p>
+
+            <p>Let's take a peek at the Ansible playbook that will deploy the Falcon sensor against our targets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat deploy-falcon.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <h3 style="margin-top: revert;">Showtime!</h3>
+            <p>Run the following command to deploy the Falcon sensor to the unmanaged assets in our environment:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook -i demo.falcon_discover.yml deploy-falcon.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-14" class="step">
+    <div class="step__number">
+        <span>Step / 14</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s14.gif" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Validate</h3>
+            <p>Sweet! You've just deployed the Falcon sensor to the unmanaged assets in your environment. You can now view the assets in the Falcon UI or we can use the
+            dynamic inventory to check for the assets with the Falcon sensor installed (aka managed assets).</p>
+
+            <p>Run the following command to view the <b>managed</b> assets group:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l managed_assets | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="
+                margin-top: revert;
+                border-left: .25em solid;
+                padding: inherit;
+                font-style: italic;
+                ">If you don't see the managed assets, you may need to wait a few minutes for the sensor to check in and for the API to update.</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-bonus" class="step">
+    <div class="step__number">
+        <span>Bonus</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2sbonus.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Bonus</h3>
+            <p>I'd be remissed if I didn't show you another way to query your managed assets using a CrowdStrike Falcon Ansible module</p>
+
+            <p>Run the following command using the `crowdstrike.falcon.falconctl_info` module to view the sensor information for the sketchy-cat assets:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible -i demo.falcon_discover.yml '*sketchy-cat*' -m crowdstrike.falcon.falconctl_info -b | less</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+            <p style="
+                margin-top: revert;
+                border-left: .25em solid;
+                padding: inherit;
+                font-style: italic;
+                ">Notice the tags?</p>
+        </div>
+    </div>
+</section>
+
+<section id="step-complete" class="step step--complete">
+    <h2><span class="text-primary">Summary</span></h2>
+    <p>In this scenario, we learned how to:</p>
+    <ul style="text-align: left;">
+        <li>Use the Falcon Discover dynamic inventory to identify assets in your environment</li>
+        <li>Use FQL filters to target specific assets</li>
+        <li>Group assets using Ansible's dynamic inventory</li>
+        <li>Modify host variables in Ansible's dynamic inventory</li>
+        <li>Deploy the Falcon sensor against those pesky sketchy-cats (unmanaged assets).</li>
+    </ul>
+    <p>In the next scenario, we will learn how to respond to security relevant events.</p>
+    <a href="#" class="btn btn--alt nav_button forward">
+        <img src="/dist/img/carousel-next.svg" width="20">
+    </a>
+    <p class="small uppercase">Next Scenario</p>
+</section>

@@ -1,0 +1,218 @@
+<section id="step-summary" class="step step--intro">
+    <div class="step__number step__number--intro">
+        <span>Overview</span>
+    </div>
+    <h1>Installing the Collection</h1>
+    <p>In this scenario, we will learn how to install the CrowdStrike Falcon Ansible collection and validate the installation.</p>
+    <p>All interactions for this lab should take place on the <b>ansible</b> tab unless otherwise instructed.</p>
+    <p>Lab location: <b>~/labs/lab1</b></p>
+</section>
+
+<section id="step-explore" class="step">
+    <div class="step__number">
+        <span>Lab Environment</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s1explore.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h2>Lay of the land...</h2>
+            <p>Before moving on, let's take a look at the lab environment.</p>
+            <p>Your lab environment consists of the following instances:</p>
+            <ul>
+                <li><b style="padding: unset;">ansible</b> - This is your driver seat. This system has Ansible and other goodies installed to help you complete the lab.</li>
+                <li><b style="padding: unset;">sketchy-cat1|2</b> - These little rascals have evaded the installation of the CrowdStrike Falcon agent. Your mission is to stop this shadow IT blasphemy.</li>
+            </ul>
+
+            <p>A few command shortcuts to help you along the way:</p>
+            <ul>
+                <li><b style="padding: unset;">labhelp</b> - This command will display a help message that contains relevant information for the lab.</li>
+                <li><b style="padding: unset;">awsinfo</b> - This command will display your AWS account information.</li>
+                <li><b style="padding: unset;">apikey</b> - This command will display your CrowdStrike API key.</li>
+            </ul>
+            <p>Go to the Ansible Instance and run the following command:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">labhelp</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-01" class="step">
+    <div class="step__number">
+        <span>Step / 01</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s1s1.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <p>Change directory to the <b>lab1</b> directory</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cd ~/labs/lab1</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-02" class="step">
+    <div class="step__number">
+        <span>Step / 02</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s1s2.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Install Collection</h3>
+            <p>To install the collection, you can use the <b>ansible-galaxy</b> command line tool. This tool is installed with Ansible by default.</p>
+            <p style="
+                border-left: .25em solid;
+                padding: inherit;
+                font-style: italic;
+                ">To view the full installation documentation, including how to install a specific version of the collection, see
+                the <a href="https://github.com/CrowdStrike/ansible_collection_falcon?tab=readme-ov-file#installing-this-collection" target="_blank">CrowdStrike Falcon Collection Installation Guide</a>.</p>
+            <p>Run the following command:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-galaxy collection install crowdstrike.falcon</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-03" class="step">
+    <div class="step__number">
+        <span>Step / 03</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s1s3.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Install Python Dependencies</h3>
+            <p>The modules in the CrowdStrike Falcon Ansible collection are powered by FalconPy! The Event-Driven Ansible source plugin is powered by the aiohttp Python library.</p>
+            <p>Let's make sure we install the python dependencies for the collection.</p>
+            <p> Run the following command:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">pip install --user crowdstrike-falconpy aiohttp</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-04" class="step">
+    <div class="step__number">
+        <span>Step / 04</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6 order-2">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s1s4.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>Validate the Installation</h3>
+            <p>To test the installation, we can run Ansible against a simple playbook <b style="padding: unset;">get-token.yml</b> that uses
+            the <b style="padding: unset;">crowdstrike.falcon.auth</b> module to get an OAuth2 token.</p>
+            <p>Run the following command:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-playbook get-token.yml -v</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-05" class="step">
+    <div class="step__number">
+        <span>Step / 05</span>
+    </div>
+    <div class="grid grid-bleed-y">
+        <div class="col-6">
+            <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s1s5.png" width="100%" alt="">
+        </div>
+        <div class="col-6">
+            <h3>(optional) View Playbook</h3>
+            <p>Now that we have successfully validated our installation, if you like, you can view the <b style="padding: unset;">get-token.yml</b> playbook
+            to see how we use the module.</p>
+            <p>Run the following command:</p>
+            <div class="grid copy-parent">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group__accent"></span>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat get-token.yml</textarea>
+                        <span class="input-group__accent"></span>
+                    </div>
+                </div>
+                <div class="col-shrink">
+                    <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                        <img src="/dist/img/icon-copy.svg" width="20">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step-complete" class="step step--complete">
+    <h2><span class="text-primary">Summary</span></h2>
+    <p>In this scenario, we learned how simple it is to install the CrowdStrike Falcon Ansible collection and validate the installation.</p>
+    <p>In the next scenario, we will use an Ansible dynamic inventory plugin to combat shadow IT in our environment.</p>
+    <a href="#" class="btn btn--alt nav_button forward">
+        <img src="/dist/img/carousel-next.svg" width="20">
+    </a>
+    <p class="small uppercase">Next Scenario</p>
+</section>
