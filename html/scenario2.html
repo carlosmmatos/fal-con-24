@@ -131,7 +131,7 @@
                 <div class="col-auto">
                     <div class="input-group">
                         <span class="input-group__accent"></span>
-                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less demo.falcon_discover.yml</textarea>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">micro demo.falcon_discover.yml</textarea>
                         <span class="input-group__accent"></span>
                     </div>
                 </div>
@@ -141,7 +141,15 @@
                     </a>
                 </div>
             </div>
-            <p style="margin-top: revert;">Press <b>q</b> to exit the buffer</p>
+            <p style="margin-top: revert;">Notice the different sections in the file:</p>
+            <ul>
+                <li><b>filter</b> - Filter to target specific assets</li>
+                <li><b>keyed_groups</b> - Groups based on a key in the host's variables</li>
+                <li><b>groups</b> - Groups based on a conditional</li>
+                <li><b>compose</b> - Allows you to modify host variables</li>
+                <li><b>caching</b> - Caching options</li>
+            </ul>
+            <p>Press <b>Ctrl-q</b> to exit</p>
         </div>
     </div>
 </section>
@@ -364,7 +372,7 @@
                 <div class="col-auto">
                     <div class="input-group">
                         <span class="input-group__accent"></span>
-                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal</textarea>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal | less</textarea>
                         <span class="input-group__accent"></span>
                     </div>
                 </div>
@@ -382,7 +390,7 @@
                 <div class="col-auto">
                     <div class="input-group">
                         <span class="input-group__accent"></span>
-                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal</textarea>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">ansible-inventory -i demo.falcon_discover.yml --list -l ip-172-17-0-20.us-west-2.compute.internal | less</textarea>
                         <span class="input-group__accent"></span>
                     </div>
                 </div>
@@ -695,6 +703,10 @@
                 padding: inherit;
                 font-style: italic;
                 ">If you don't see the managed assets, you may need to wait a few minutes for the sensor to check in and for the API to update.</p>
+        </div>
+        <p style="margin-top: revert;">Let's check the console as well:</p>
+        <div>
+            <a class="btn btn-lg btn-danger round-both mb-1 cloud_account_id" rel="noopener2 noreferrer2" target="crowdstrike" data-template="https://falcon.crowdstrike.com/host-management/hosts?filter=tags%3A%27SensorGroupingTags%2F{{alias}}%27" href="#">Open Host Management</a>
         </div>
     </div>
 </section>
