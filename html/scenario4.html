@@ -244,7 +244,7 @@
     <div>
         <p>Module: <b>crowdstrike.falcon.kernel_support_info</b></p>
         <p>Get information about kernels supported by the Falcon Sensor for Linux. This module is useful for determining if the Falcon Sensor is
-            compatible with the kernel version.</p>
+            compatible with a particular kernel versions.</p>
         <p class="admonition-padding">This does not reflect or is relevant for systems running in User Mode.</p>
     </div>
     <div class="grid grid-bleed-y" style="margin-top: inherit;">
@@ -269,7 +269,7 @@
                     </a>
                 </div>
             </div>
-            <p class="admonition-padding" style="margin-top: revert;">Notice how we use the <b class="bold-red">auth</b> object from the previous playbook.</p>
+            <p class="admonition-padding" style="margin-top: revert;">Notice how we use the <b class="bold-red">auth</b> object from the previous playbook to authenticate with the CrowdStrike Falcon API.</p>
             <p>In this example, we will target <b>sketchy-cat2</b> and set the kernel and architecture from the gathered facts. Next, we will pass that
                 information to the <b>kernel_support_info</b> module to see what sensor versions are supported for sketchy.</p>
             <p>Finally we list all the support information for Ubuntu 20 kernels that start with 5.8</p>

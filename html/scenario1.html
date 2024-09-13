@@ -1,3 +1,22 @@
+<style>
+    .admonition-padding {
+        border-left: .25em solid;
+        padding-left: 20px;
+        font-style: italic;
+    }
+    .input-group__control {
+        font-family: "Courier New", Courier, monospace;
+    }
+    .modal-content>div {
+        width: unset;
+    }
+    p {
+        line-height: 1.7;
+    }
+    li {
+        line-height: 1.3;
+    }
+</style>
 <section id="step-summary" class="step step--intro">
     <div class="step__number step__number--intro">
         <span>Overview</span>
@@ -156,7 +175,7 @@
         <div class="col-6">
             <h3>Validate the Installation</h3>
             <p>To test the installation, we can run Ansible against a simple playbook <b style="padding: unset;">get-token.yml</b> that uses
-            the <b style="padding: unset;">crowdstrike.falcon.auth</b> module to get an OAuth2 token.</p>
+                the <b style="padding: unset;">crowdstrike.falcon.auth</b> module to get an OAuth2 token.</p>
             <p>Run the following command:</p>
             <div class="grid copy-parent">
                 <div class="col-auto">
@@ -174,20 +193,14 @@
             </div>
         </div>
     </div>
-</section>
-
-<section id="step-05" class="step">
-    <div class="step__number">
-        <span>Step / 05</span>
-    </div>
-    <div class="grid grid-bleed-y">
+    <div class="grid grid-bleed-y" style="margin-top: inherit;">
         <div class="col-6">
             <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s1s5.png" width="100%" alt="">
         </div>
         <div class="col-6">
             <h3>(optional) View Playbook</h3>
             <p>Now that we have successfully validated our installation, if you like, you can view the <b style="padding: unset;">get-token.yml</b> playbook
-            to see how we use the module.</p>
+                to see how we use the module.</p>
             <p>Run the following command:</p>
             <div class="grid copy-parent">
                 <div class="col-auto">
@@ -205,6 +218,43 @@
             </div>
         </div>
     </div>
+</section>
+
+<section id="step-05" class="step">
+    <div class="step__number">
+        <span>Step / 05</span>
+    </div>
+
+    <div>
+        <h3>Authentication</h3>
+        <p>You might be asking: "<text style="font-style: italic;">how in the world did that playbook we ran in the previous step just...work?</text></p>
+        <p>The short of it is that your lab environment already has your Falcon API credentials stored in environment variables that the CrowdStrike Falcon Ansible collection
+            knows how to use in order to authenticate to Falcon.</p>
+        <p>Run the following command to view your Falcon API environment variables:</p>
+        <div class="grid copy-parent" style="width: fit-content;">
+            <div class="col-auto">
+                <div class="input-group">
+                    <span class="input-group__accent"></span>
+                    <textarea readonly class="input-group__control copy-text" type="text" rows="1">env | grep FALCON</textarea>
+                    <span class="input-group__accent"></span>
+                </div>
+            </div>
+            <div class="col-shrink">
+                <a href="#" class="btn btn--alt btn--small btn--square copy-link" data-message="Copied!">
+                    <img src="/dist/img/icon-copy.svg" width="20">
+                </a>
+            </div>
+        </div>
+    </div>
+    <p style="margin-top: revert;">You should see the following ENV variables:</p>
+    <ul>
+        <li><b>FALCON_CLIENT_ID</b>: The ID associated with your API credentials</li>
+        <li><b>FALCON_CLIENT_SECRET</b>: The secret associated with your API credentials</li>
+        <li><b>FALCON_CLOUD</b>: The Falcon cloud region your API credentials are associated with</li>
+    </ul>
+    <p class="admonition-padding">To learn more about authenticating with the CrowdStrike Falcon Ansible collection, see the
+    <a href="https://github.com/CrowdStrike/ansible_collection_falcon/blob/main/docs/authentication.md" target="_blank">Authentication Guide</a>.</p>
+
 </section>
 
 <section id="step-complete" class="step step--complete">

@@ -28,9 +28,9 @@
         <span>Overview</span>
     </div>
     <h1>React with Event-Driven Ansible (EDA)</h1>
-    <p>In this lab, you will learn how to leverage the Event Streams API via the crowdstrike.falcon.eventstreams Event-Driven Ansible (EDA) source
+    <p>In this lab, you will learn how to leverage the Event Streams API via the <b>crowdstrike.falcon.eventstreams</b> Event-Driven Ansible (EDA) source
         to monitor and respond to CrowdStrike Falcon events in near real-time*.</p>
-    <p class="admonition-padding">Please note that events are not guaranteed to be delivered in real-time. The time it takes for an event to be delivered can vary based on
+    <p class="admonition-padding">* Please note that events are not guaranteed to be delivered in real-time. The time it takes for an event to be delivered can vary based on
         the current load on the CrowdStrike Event Streams service along with other factors.</p>
     <p>By the end of this lab, you will be able to:</p>
     <ul style="text-align: left; list-style-position: inside;">
@@ -208,7 +208,7 @@
             </div>
             <p class="admonition-padding" style="margin-top: revert;">This command generates an Overwatch severity level low event that matches the conditions defined in the rulebook.</p>
             <p>Now go back to the <b>ansible</b> vm and let's wait for the event to be delivered. Once the event is delivered, you should see the event printed out in the terminal.</p>
-            <p class="admonition-padding">Recall that this is not real-time and the time it takes for an event to be delivered can vary.</p>
+            <p class="admonition-padding">Please note that it may take up to a few minutes before the event is received.</p>
             <p>Cancel the rulebook execution by pressing <b>Ctrl + C</b> before proceeding to the next step.</p>
         </div>
     </div>
@@ -288,7 +288,7 @@
                 <div class="col-auto">
                     <div class="input-group">
                         <span class="input-group__accent"></span>
-                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less playbooks/host-contain.yml</textarea>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat playbooks/host-contain.yml</textarea>
                         <span class="input-group__accent"></span>
                     </div>
                 </div>
@@ -341,7 +341,7 @@
                 <div class="col-auto">
                     <div class="input-group">
                         <span class="input-group__accent"></span>
-                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">less playbooks/debug-containment.yml</textarea>
+                        <textarea readonly class="input-group__control copy-text" type="text" rows="1">cat playbooks/debug-containment.yml</textarea>
                         <span class="input-group__accent"></span>
                     </div>
                 </div>
@@ -425,7 +425,7 @@
             </div>
             <p class="admonition-padding" style="margin-top: revert;">This command generates an Overwatch severity level High event that matches the conditions defined in the rulebook.</p>
             <p>Now go back to the <b>ansible</b> vm and let's wait for the event to be delivered. Once the event is delivered, you should see the rules executed.</p>
-            <p class="admonition-padding">Recall that this is not real-time and the time it takes for an event to be delivered can vary.</p>
+            <p class="admonition-padding">Please note that it may take up to a few minutes before the event is received.</p>
             <p>Cancel the rulebook execution by pressing <b>Ctrl + C</b> before proceeding to the next step.</p>
         </div>
     </div>

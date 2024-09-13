@@ -270,9 +270,6 @@
                     </a>
                 </div>
             </div>
-            <br>
-            <br>
-            <p><mark>Recomment the previous line</mark> and save the file before moving on to the next step.</p>
         </div>
     </div>
 </section>
@@ -291,8 +288,8 @@
             <p>Groups in dynamic inventories come in 2 different flavors: <b>keyed_groups</b> and <b>groups</b>.</p>
             <p><b>keyed_groups</b> are groups that are based on a key in the host's variables, while <b>groups</b> are groups that are based
                 on a conditional. In this lab, we'll explore both.</p>
-
-            <p>Under the <b>keyed_groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
+            <p>Open the <b>demo.falcon_discover.yml</b> file and <mark>recomment the previous line</mark>.
+            <p>Under the <b>keyed_groups</b> section, uncomment the following lines:</p>
 
             <code># - prefix: cloud<br>#   key: cloud_provider</code>
 
@@ -411,7 +408,7 @@
     </div>
     <div class="grid grid-bleed-y">
         <div class="col-6" style="width: unset;">
-            <h3>Narroring the Scope</h3>
+            <h3>Narrowing the Scope</h3>
             <p>Now that we have seen how to filter, group, and modify host variables, let's use Ansible to deploy the Falcon sensor against unmanaged assets. Specifically, for this lab we
                 will want to ensure that you are targeting the correct assets before proceeding.</p>
 
@@ -486,7 +483,8 @@
         <div class="col-6">
             <p>We can also use another unique identifier to deal with duplicates. In our case, we will use the <b>cloud_account_id</b> since everyone has a unique AWS account ID in the lab.</p>
 
-            <p><mark>Recomment the previous change</mark> and then under the <b>keyed_groups</b> section in the <b>demo.falcon_discover.yml</b> file, uncomment the following lines:</p>
+            <p>Open the <b>demo.falcon_discover.yml</b> file and <mark>recomment the previous line</mark>.
+            <p>Under the <b>keyed_groups</b> section, uncomment the following lines:</p>
             <code># - prefix: sketchy<br>#   key: cloud_account_id</code>
             <br>
             <p>Save the file and run the <b style="padding: unset;">ansible-inventory</b> command to view the new grouped assets.</p>
@@ -547,6 +545,7 @@
     <div class="grid grid-bleed-y">
         <div class="col-6">
             <img class="enlargeable" src="/portal/images/testdrive/devrel/ansible-s2s11.gif" width="100%" alt="">
+            <p style="margin-top: 2em; border-left-color: red; color: limegreen;" class="admonition-padding">If you are having issues with your inventory file, there is a helper script you can use. Run the following command: <b>inventory-rescue</b>. This command will reset your inventory file to the correct state.</p>
         </div>
         <div class="col-6">
             <h3>Final Filter</h3>
@@ -649,6 +648,10 @@
                     </a>
                 </div>
             </div>
+            <p style="margin-top: revert;">Prior to deploying, let's open the console to make sure we don't see the little rascals:</p>
+            <div>
+                <a class="btn btn-lg btn-danger round-both mb-1 cloud_account_id" rel="noopener2 noreferrer2" target="crowdstrike" data-template="https://falcon.crowdstrike.com/host-management/hosts?filter=tags%3A%27SensorGroupingTags%2F{{alias}}%27" href="#">Open Host Management</a>
+            </div>
             <h3 style="margin-top: revert;">Showtime!</h3>
             <p>Run the following command to deploy the Falcon sensor to the unmanaged assets in our environment:</p>
             <div class="grid copy-parent">
@@ -703,10 +706,7 @@
                 padding: inherit;
                 font-style: italic;
                 ">If you don't see the managed assets, you may need to wait a few minutes for the sensor to check in and for the API to update.</p>
-        </div>
-        <p style="margin-top: revert;">Let's check the console as well:</p>
-        <div>
-            <a class="btn btn-lg btn-danger round-both mb-1 cloud_account_id" rel="noopener2 noreferrer2" target="crowdstrike" data-template="https://falcon.crowdstrike.com/host-management/hosts?filter=tags%3A%27SensorGroupingTags%2F{{alias}}%27" href="#">Open Host Management</a>
+            <p><mark>Refresh the Falcon console to see if our pets have been tamed!</mark></p>
         </div>
     </div>
 </section>
@@ -721,7 +721,7 @@
         </div>
         <div class="col-6">
             <h3>Bonus</h3>
-            <p>I'd be remissed if I didn't show you another way to query your managed assets using a CrowdStrike Falcon Ansible module</p>
+            <p>I'd be remiss if I didn't show you another way to query your managed assets using a CrowdStrike Falcon Ansible module</p>
 
             <p>Run the following command using the <b>crowdstrike.falcon.falconctl_info</b> module to view the sensor information for the sketchy-cat assets:</p>
             <div class="grid copy-parent">
